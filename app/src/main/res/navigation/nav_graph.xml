@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/fragmentMain">
+
+    <fragment
+        android:id="@+id/fragmentMain"
+        android:name="com.iamshekhargh.myapplication.ui.mainFragment.FragmentMain"
+        android:label="Notes"
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_fragmentMain_to_fragmentAddNote"
+            app:destination="@id/fragmentAddNote" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentAddNote"
+        android:name="com.iamshekhargh.myapplication.ui.addNoteFragment.FragmentAddNote"
+        android:label="Add Fragment"
+        tools:layout="@layout/fragment_add_note" />
+</navigation>
