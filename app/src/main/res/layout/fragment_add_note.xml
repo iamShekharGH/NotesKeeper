@@ -1,76 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.addNoteFragment.FragmentAddNote"
+    android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp">
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="16dp"
+    android:orientation="vertical"
+    tools:context=".ui.addNoteFragment.FragmentAddNote"
+    tools:ignore="HardcodedText">
 
-    <EditText
-        android:id="@+id/add_frag_heading"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@null"
-        android:fontFamily="@font/hind_medium"
-        android:hint="Heading"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/add_frag_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@null"
-        android:fontFamily="@font/hind_medium"
-        android:hint="description"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintTop_toBottomOf="@id/add_frag_heading" />
+        <EditText
+            android:id="@+id/add_frag_heading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:background="@null"
+            android:fontFamily="@font/hind_medium"
+            android:hint="Heading"
+            android:inputType="text"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/add_frag_addReminder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        android:weightSum="10"
-        app:layout_constraintTop_toBottomOf="@id/add_frag_description">
+        <EditText
+            android:id="@+id/add_frag_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:background="@null"
+            android:fontFamily="@font/hind_medium"
+            android:hint="description"
+            android:inputType="text"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintTop_toBottomOf="@id/add_frag_heading" />
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/add_frag_addReminder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:weightSum="10"
+            app:layout_constraintTop_toBottomOf="@id/add_frag_description">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="9"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                tools:text="Add Reminder" />
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"
+                android:contentDescription="Add Label"
+                android:src="@mipmap/ic_plus_foreground" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/add_frag_lable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layoutAnimation="@anim/layout_animation"
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/add_frag_addReminder" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_label"
+            android:orientation="horizontal"
+            android:weightSum="10">
+
+            <EditText
+                android:id="@+id/add_frag_label_et_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_weight="9"
+                android:background="@null"
+                android:hint="Enter Label"
+                android:inputType="text"
+                android:paddingStart="8dp"
+                android:paddingEnd="0dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/add_frag_label_iv_add"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:contentDescription="Add Label to note."
+                android:src="@mipmap/ic_plus_foreground" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/add_frag_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="9"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            tools:text="Add Reminder" />
-
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_weight="1"
-            android:src="@mipmap/ic_plus_foreground" />
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/add_frag_lable"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:nestedScrollingEnabled="false"
-        app:layout_constraintTop_toBottomOf="@id/add_frag_addReminder" />
-
-    <Button
-        android:id="@+id/add_frag_submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="SUBMIT"
-        android:textSize="21sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/add_frag_lable" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_marginTop="16dp"
+            android:text="SUBMIT"
+            android:textSize="21sp"
+            app:cornerRadius="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

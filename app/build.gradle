@@ -6,6 +6,9 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id "androidx.navigation.safeargs.kotlin"
+    id 'com.google.gms.google-services'
+
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -79,6 +82,20 @@ dependencies {
 
     // Gson
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    // flexbox for rv layout manager
+    implementation 'com.google.android:flexbox:2.0.1'
+
+    // firebase
+    implementation platform('com.google.firebase:firebase-bom:27.0.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    // Datastore
+//    implementation "androidx.datastore:datastore:1.0.0-alpha08"
+    implementation "androidx.datastore:datastore-preferences:1.0.0-alpha08"
 
 
 }

@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="16dp"
-    android:layout_marginEnd="16dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
     android:background="@drawable/background_note"
     app:cardCornerRadius="8dp">
 
@@ -16,7 +16,7 @@
         android:orientation="vertical"
         android:padding="8dp">
 
-        <EditText
+        <TextView
             android:id="@+id/note_heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -26,8 +26,8 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             tools:text="Heading Number 1" />
 
-        <EditText
-            android:id="@+id/note_discription"
+        <TextView
+            android:id="@+id/note_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -41,7 +41,8 @@
             android:id="@+id/note_rv_label"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager" />
     </LinearLayout>
 
 

@@ -3,6 +3,7 @@ package com.iamshekhargh.myapplication.ui.mainFragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.iamshekhargh.myapplication.data.Note
 import com.iamshekhargh.myapplication.data.NotesDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -17,19 +18,35 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class FragmentMainViewModel @Inject constructor(
-    notesDao: NotesDao
+    private val notesDao: NotesDao
 ) : ViewModel() {
+
     private val channel = Channel<EventHandler>()
     val channelFlow = channel.receiveAsFlow()
+
+    val notesList = notesDao.getAllNotes().asLiveData()
 
     fun fabClicked() = viewModelScope.launch {
         channel.send(EventHandler.OpenAddNoteFragment)
     }
 
-    val notesList = notesDao.getAllNotes().asLiveData()
+
+    fun testFabClicked() = viewModelScope.launch {
+        channel.send(EventHandler.OpenTestingFragment)
+    }
+
+    fun itemSwiped(note: Note?) = viewModelScope.launch {
+        // TODO give a undo option here!!
+        note?.let { notesDao.deleteNote(it) }
+    }
+
+    fun noteItemClicked(n: Note) = viewModelScope.launch {
+        channel.send(EventHandler.OpenEditNoteFragment(n))
+    }
 }
 
 sealed class EventHandler {
-    object OpenAddNotesFrag : EventHandler()
+    class OpenEditNoteFragment(val note: Note) : EventHandler()
+    object OpenTestingFragment : EventHandler()
     object OpenAddNoteFragment : EventHandler()
 }

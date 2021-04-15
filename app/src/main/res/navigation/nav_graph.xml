@@ -18,5 +18,29 @@
         android:id="@+id/fragmentAddNote"
         android:name="com.iamshekhargh.myapplication.ui.addNoteFragment.FragmentAddNote"
         android:label="Add Fragment"
-        tools:layout="@layout/fragment_add_note" />
+        tools:layout="@layout/fragment_add_note" >
+        <argument
+            android:name="label"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="editNote"
+            app:argType="com.iamshekhargh.myapplication.data.Note"
+            app:nullable="true" />
+        <argument
+            android:name="title"
+            app:argType="string"
+            android:defaultValue="Add Note" />
+    </fragment>
+    <dialog
+        android:id="@+id/confirmationDialog"
+        android:name="com.iamshekhargh.myapplication.ui.utils.ConfirmationDialog"
+        android:label="ConfirmationDialog">
+        <action
+            android:id="@+id/action_confirmationDialog_to_fragmentAddNote"
+            app:destination="@id/fragmentAddNote" />
+    </dialog>
+    <action
+        android:id="@+id/action_global_confirmationDialog"
+        app:destination="@id/confirmationDialog" />
 </navigation>

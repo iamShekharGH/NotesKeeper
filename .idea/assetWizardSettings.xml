@@ -79,8 +79,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="$USER_HOME$/Desktop/AAAAAAA/plus.png" />
-                                                <entry key="scalingPercent" value="77" />
+                                                <entry key="imagePath" value="$USER_HOME$/Documents/Screenshots/Old till 25March'20/Screenshot 2019-06-06 at 1.54.55 AM.png" />
+                                                <entry key="scalingPercent" value="199" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -114,8 +114,7 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="2196f3" />
-                                      <entry key="outputName" value="ic_plus" />
+                                      <entry key="backgroundColor" value="e6f637" />
                                     </map>
                                   </option>
                                 </PersistentState>
