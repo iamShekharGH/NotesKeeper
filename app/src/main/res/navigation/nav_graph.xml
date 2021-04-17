@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/fragmentMain">
+    app:startDestination="@id/fragmentFirst">
 
     <fragment
         android:id="@+id/fragmentMain"
@@ -13,12 +13,16 @@
         <action
             android:id="@+id/action_fragmentMain_to_fragmentAddNote"
             app:destination="@id/fragmentAddNote" />
+        <argument
+            android:name="whereTo"
+            app:argType="com.iamshekhargh.myapplication.utils.FirstFragArgs"
+            android:defaultValue="SKIP" />
     </fragment>
     <fragment
         android:id="@+id/fragmentAddNote"
         android:name="com.iamshekhargh.myapplication.ui.addNoteFragment.FragmentAddNote"
         android:label="Add Fragment"
-        tools:layout="@layout/fragment_add_note" >
+        tools:layout="@layout/fragment_add_note">
         <argument
             android:name="label"
             app:argType="string"
@@ -29,18 +33,49 @@
             app:nullable="true" />
         <argument
             android:name="title"
-            app:argType="string"
-            android:defaultValue="Add Note" />
+            android:defaultValue="Add Note"
+            app:argType="string" />
     </fragment>
     <dialog
         android:id="@+id/confirmationDialog"
         android:name="com.iamshekhargh.myapplication.ui.utils.ConfirmationDialog"
-        android:label="ConfirmationDialog">
+        android:label="ConfirmationDialog"
+        tools:layout="@layout/dialog_custom">
         <action
             android:id="@+id/action_confirmationDialog_to_fragmentAddNote"
             app:destination="@id/fragmentAddNote" />
     </dialog>
     <action
         android:id="@+id/action_global_confirmationDialog"
-        app:destination="@id/confirmationDialog" />
+        app:destination="@id/confirmationDialog"
+        app:enterAnim="@anim/nav_default_pop_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim" />
+    <fragment
+        android:id="@+id/fragmentSignUp"
+        android:name="com.iamshekhargh.myapplication.ui.signUpFragment.FragmentSignUp"
+        android:label="fragment_signup"
+        tools:layout="@layout/fragment_signup" >
+        <argument
+            android:name="whereTo"
+            app:argType="com.iamshekhargh.myapplication.utils.FirstFragArgs"
+            android:defaultValue="SIGN_UP" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentFirst"
+        android:name="com.iamshekhargh.myapplication.ui.fragmentFirst.FragmentFirst"
+        android:label="FragmentFirst"
+        tools:layout="@layout/fragment_first">
+
+        <action
+            android:id="@+id/action_fragmentFirst_to_fragmentSignUp"
+            app:destination="@id/fragmentSignUp"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_fragmentFirst_to_fragmentMain"
+            app:destination="@id/fragmentMain"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+
+    </fragment>
 </navigation>

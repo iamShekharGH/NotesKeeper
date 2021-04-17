@@ -1,13 +1,7 @@
 package com.iamshekhargh.myapplication.ui.addNoteFragment
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -18,9 +12,7 @@ import com.iamshekhargh.myapplication.databinding.FragmentAddNoteBinding
 import com.iamshekhargh.myapplication.ui.LabelAdapter
 import com.iamshekhargh.myapplication.ui.LabelAdapterListEditingOptions
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 
 /**
  * Created by <<-- iamShekharGH -->>
@@ -33,12 +25,6 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
     private val viewModel: FragmentAddNoteViewModel by viewModels()
     private val labelAdapter = LabelAdapter(this)
     private val TAG = "FragmentAddNote"
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "FragmentAddNote")
-
-    //    val labelKey = intPreferencesKey("label")
-    private val labelKey = stringPreferencesKey("label")
-
-    private lateinit var dataStore: DataStore<Preferences>
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,25 +65,6 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
         }
 
         setupEvents()
-    }
-
-    suspend fun writeToDatastore(label: String) {
-        requireContext().dataStore.edit { file ->
-            file[labelKey] = label
-        }
-    }
-
-    suspend fun readFromDatastore(): String {
-        var label: String
-        val labelFlow: Flow<String> = requireContext().dataStore.data
-            .map { preferences ->
-                preferences[labelKey] ?: ""
-            }
-        var l: String = ""
-        labelFlow.collect { value ->
-            l = value
-        }
-        return l
     }
 
 
@@ -166,6 +133,5 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
 
     override fun onDestroy() {
         super.onDestroy()
-
     }
 }

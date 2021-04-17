@@ -308,7 +308,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/remove/baseline_remove_24.xml" />
+                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/search/baseline_search_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -319,7 +319,8 @@
                         <option name="values">
                           <map>
                             <entry key="autoMirrored" value="true" />
-                            <entry key="outputName" value="ic_remove" />
+                            <entry key="color" value="ffffff" />
+                            <entry key="outputName" value="ic_search" />
                           </map>
                         </option>
                       </PersistentState>
