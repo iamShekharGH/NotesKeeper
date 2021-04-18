@@ -1,7 +1,11 @@
 package com.iamshekhargh.myapplication.ui.mainFragment
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +18,7 @@ import com.google.android.flexbox.JustifyContent
 import com.iamshekhargh.myapplication.R
 import com.iamshekhargh.myapplication.data.Note
 import com.iamshekhargh.myapplication.databinding.FragmentMainBinding
+import com.iamshekhargh.myapplication.utils.onTextEntered
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -24,6 +29,8 @@ import kotlinx.coroutines.flow.collect
  */
 @AndroidEntryPoint
 class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicked {
+
+    private lateinit var searchView: SearchView
 
     private val viewModel: FragmentMainViewModel by viewModels()
 
@@ -71,6 +78,7 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
         }
 
         setupEventHandling()
+        setHasOptionsMenu(true)
     }
 
     private fun setupEventHandling() {
@@ -100,10 +108,44 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
                         findNavController().navigate(action)
 
                     }
+                    EventHandler.OpenProfileFragment -> {
+                        val action = FragmentMainDirections.actionGlobalFragmentProfile()
+                        findNavController().navigate(action)
+                    }
                 }
-
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_activ_menu, menu)
+        val searchItem = menu.findItem(R.id.menu_search)
+        searchView = searchItem.actionView as SearchView
+
+        searchView.onTextEntered { query ->
+            viewModel.searchQuery.value = query
+        }
+
+
+        super.onCreateOptionsMenu(menu, inflater)
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_logout -> {
+                viewModel.logoutMenuItemClicked()
+                findNavController().popBackStack()
+            }
+            R.id.menu_profile -> {
+                viewModel.profileMenuItemClicked()
+            }
+            R.id.menu_delete_user -> {
+
+            }
+
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun noteItemClicked(n: Note) {

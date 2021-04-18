@@ -13,7 +13,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
-    private lateinit var searchView: SearchView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,23 +30,24 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
-        menuInflater.inflate(R.menu.main_activ_menu, menu)
-        if (menu != null) {
-            val searchItem = menu.findItem(R.id.menu_search)
-            searchView = searchItem.actionView as SearchView
-            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean = true
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    TODO("Not yet implemented")
-                }
-            })
-        }
-
-        return super.onCreateOptionsMenu(menu)
-    }
+//    private lateinit var searchView: SearchView
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//
+//        menuInflater.inflate(R.menu.main_activ_menu, menu)
+//        if (menu != null) {
+//            val searchItem = menu.findItem(R.id.menu_search)
+//            searchView = searchItem.actionView as SearchView
+//            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//                override fun onQueryTextSubmit(query: String?): Boolean = true
+//
+//                override fun onQueryTextChange(newText: String?): Boolean {
+//                }
+//            })
+//        }
+//
+//        return super.onCreateOptionsMenu(menu)
+//    }
 }
 
 

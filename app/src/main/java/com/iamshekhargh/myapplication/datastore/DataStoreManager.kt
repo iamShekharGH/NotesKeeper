@@ -5,24 +5,49 @@ import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
 import com.iamshekhargh.myapplication.data.Note
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
+import java.io.IOException
+import javax.inject.Singleton
 
 /**
  * Created by <<-- iamShekharGH -->>
  * on 15 April 2021
  * at 2:15 PM.
  */
+@Singleton
 class DataStoreManager(c: Context) {
+    private val TAG = "DataStoreManager"
+
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "com.iamshekhargh.myapplication")
     private val mDataStore = c.dataStore
+
+    private object PreferenceKeys {
+        val LABEL_KEY = stringPreferencesKey("labelList")
+    }
+
     private val labelKey = stringPreferencesKey("labelList")
     val emptyList: MutableList<String> = arrayListOf()
+
+    val prefFlow = mDataStore.data
+        .catch { e ->
+            if (e is IOException) {
+                Log.i(TAG, ": ${e.message}")
+                e.printStackTrace()
+                emit(emptyPreferences())
+            } else throw e
+        }
+        .map { prefs ->
+            val label = prefs[PreferenceKeys.LABEL_KEY]
+
+        }
 
 //    val labelList: Flow<MutableList<String>> = mDataStore.data.catch {
 //        if (it is IOException) {

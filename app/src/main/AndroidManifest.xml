@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/DhartiSunehari">
+        android:theme="@style/DhartiSunehariUlta">
         <activity
             android:name=".ui.MainActivity"
             android:windowSoftInputMode="adjustResize">

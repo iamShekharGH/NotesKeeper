@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText">
     <item
         android:id="@+id/menu_search"
         android:icon="@drawable/ic_search"
         android:title="Search"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/menu_logout"
-        android:icon="@drawable/ic_search"
-        android:title="Logout"
-        app:showAsAction="never" />
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="ifRoom|collapseActionView" />
 
     <item
         android:id="@+id/menu_profile"
-        android:icon="@drawable/ic_search"
         android:title="Profile"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_logout"
+        android:title="Logout"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_delete_user"
+        android:title="Delete Profile"
         app:showAsAction="never" />
 
 

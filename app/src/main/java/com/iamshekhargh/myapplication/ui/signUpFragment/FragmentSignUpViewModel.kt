@@ -1,12 +1,13 @@
 package com.iamshekhargh.myapplication.ui.signUpFragment
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseUser
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.iamshekhargh.myapplication.utils.FirstFragArgs
@@ -31,8 +32,26 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
     private val eventsChannel = Channel<SignUpEvents>()
     val eventsAsFlow = eventsChannel.receiveAsFlow()
 
+    var fragType: FirstFragArgs = FirstFragArgs.SIGN_UP
+
+    lateinit var googleSignInOptions: GoogleSignInOptions
+
+    lateinit var googleSignInClient: GoogleSignInClient
+
     fun initialiseFirebaseAuth() {
         this.auth = Firebase.auth
+    }
+
+    fun initialiseGoogleSignInOptions(token: String) {
+        googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(token)
+            .requestEmail()
+            .build()
+    }
+
+    fun initialiseGoogleSignInClient(c: Context) {
+        googleSignInClient = GoogleSignIn.getClient(c, googleSignInOptions)
+
     }
 
     private fun startSignUp(email: String, password: String) {
@@ -43,20 +62,22 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
                         task.isSuccessful -> {
                             Log.i(TAG, "startSignUp: sign up successful.")
                             user = auth.currentUser
+                            showSnackbar("Sign Up ho gaya.")
                         }
                         task.exception is FirebaseAuthUserCollisionException -> {
                             Log.i(
                                 TAG,
                                 "startSignUp: LoginFailed ${task.exception} now trying to sign in"
                             )
-                            showSignInErrorMessage("User already exists, trying to Sign in instead. You forgot :'( ")
+                            showSnackbar("User already exists, trying to Sign in instead. You forgot :'( ")
+//                            showSignInErrorMessage("User already exists, trying to Sign in instead. You forgot :'( ")
                             startSignIn(email, password)
                         }
                         else -> {
                             //                        FirebaseAuthUserCollisionException
                             task.exception?.printStackTrace()
                             //                        Log.i(TAG, "startSignUp: LoginFailed ${task.exception}")
-                            loginFailed(task.exception?.message + " <- iss vaja se")
+                            showSnackbar(task.exception?.message + " <- iss vaja se")
                         }
                     }
                 }
@@ -68,24 +89,30 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
             when {
                 task.isSuccessful -> {
                     user = auth.currentUser
+                    showSnackbar("Login Successful!")
                 }
                 task.exception is FirebaseAuthInvalidCredentialsException -> {
-                    loginFailed("Password is wrong, IDIOT!")
+//                    loginFailed("Password is wrong, IDIOT!")
+                    showSignInErrorWrongPassword("Password is wrong, IDIOT!")
                 }
                 else -> {
                     task.exception?.printStackTrace()
-                    loginFailed(task.exception?.message + " <- iss vaja se")
+                    showSnackbar(task.exception?.message + " <- iss vaja se")
                 }
             }
         }
     }
 
-    private fun loginFailed(e: String) = viewModelScope.launch {
+    private fun showSnackbar(e: String) = viewModelScope.launch {
         eventsChannel.send(SignUpEvents.ShowSnackBar(e))
     }
 
-    private fun showSignInErrorMessage(text: String) = viewModelScope.launch {
+    private fun showSignInErrorWrongEmail(text: String) = viewModelScope.launch {
         eventsChannel.send(SignUpEvents.ShowEmailEditTextError(text))
+    }
+
+    private fun showSignInErrorWrongPassword(text: String) = viewModelScope.launch {
+        eventsChannel.send(SignUpEvents.ShowPasswordEditTextError(text))
     }
 
     fun loginClicked(email: String, password: String, fragType: FirstFragArgs) =
@@ -105,6 +132,22 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
             }
         }
 
+    fun firebaseAuthWithGoogle(idToken: String?) {
+        val credentials = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credentials)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    user = auth.currentUser
+                    showSnackbar("Login Successful!!")
+                } else {
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    showSnackbar("Login Failed!! Kuch ni hoga tumse..")
+                    task.exception?.printStackTrace()
+                }
+            }
+    }
+
+
     companion object {
         private const val TAG = "FragmentSignUpViewModel"
     }
@@ -113,4 +156,5 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
 sealed class SignUpEvents {
     class ShowSnackBar(val text: String) : SignUpEvents()
     class ShowEmailEditTextError(val text: String) : SignUpEvents()
+    class ShowPasswordEditTextError(val text: String) : SignUpEvents()
 }
