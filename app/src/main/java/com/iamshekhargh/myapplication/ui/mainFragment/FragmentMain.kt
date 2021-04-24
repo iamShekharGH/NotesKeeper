@@ -12,9 +12,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.FlexboxLayoutManager
-import com.google.android.flexbox.JustifyContent
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.iamshekhargh.myapplication.R
 import com.iamshekhargh.myapplication.data.Note
 import com.iamshekhargh.myapplication.databinding.FragmentMainBinding
@@ -28,57 +29,85 @@ import kotlinx.coroutines.flow.collect
  * at 7:50 PM.
  */
 @AndroidEntryPoint
-class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicked {
+class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicked,
+    FirebaseAuth.AuthStateListener {
 
     private lateinit var searchView: SearchView
 
+    lateinit var binding: FragmentMainBinding
     private val viewModel: FragmentMainViewModel by viewModels()
+    lateinit var notesAdapter: NotesAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentMainBinding.bind(view)
-        val notesAdapter = NotesAdapter(this)
+        binding = FragmentMainBinding.bind(view)
+        notesAdapter = NotesAdapter(this)
+        Firebase.auth.addAuthStateListener(this@FragmentMain)
 
         binding.apply {
             fragMainRv.adapter = notesAdapter
-            val flexboxLayoutManager = FlexboxLayoutManager(requireContext())
-            flexboxLayoutManager.flexDirection = FlexDirection.ROW
-            flexboxLayoutManager.justifyContent = JustifyContent.FLEX_END
-            fragMainRv.layoutManager = flexboxLayoutManager
+//            val flexboxLayoutManager = FlexboxLayoutManager(requireContext())
+//            flexboxLayoutManager.flexDirection = FlexDirection.ROW
+//            flexboxLayoutManager.flexWrap = FlexWrap.WRAP
+//            flexboxLayoutManager.justifyContent = JustifyContent.CENTER
+//            fragMainRv.layoutManager = flexboxLayoutManager
 
-//            fragMainRv.setHasFixedSize(true)
-
-            fragMainFab.setOnClickListener {
-                viewModel.fabClicked()
-            }
-
+            fragMainFab.setOnClickListener { viewModel.fabClicked() }
             fragMainFabTestingViews.setOnClickListener { viewModel.testFabClicked() }
-
-            ItemTouchHelper(object :
-                ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-                override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    target: RecyclerView.ViewHolder
-                ): Boolean {
-                    return false
-                }
-
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    val note = notesAdapter.currentList[viewHolder.adapterPosition]
-                    viewModel.itemSwiped(note)
-                }
-
-            }).attachToRecyclerView(fragMainRv)
-
         }
 
-        viewModel.notesList.observe(viewLifecycleOwner) { notes ->
-            notesAdapter.submitList(notes)
-        }
-
+        swipeDownFunctions()
+        itemSlideFunctionalityOnRecyclerView()
+        observeNotesForChanges()
         setupEventHandling()
         setHasOptionsMenu(true)
+
+        setTitle()
+    }
+
+    private fun swipeDownFunctions() = binding.fragMainSwiperl.setOnRefreshListener {
+        viewModel.swipePulled()
+        binding.fragMainSwiperl.isRefreshing = false
+    }
+
+    private fun itemSlideFunctionalityOnRecyclerView() {
+        ItemTouchHelper(object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val note = notesAdapter.currentList[viewHolder.adapterPosition]
+                viewModel.itemSwiped(note)
+            }
+
+        }).attachToRecyclerView(binding.fragMainRv)
+    }
+
+    private fun observeNotesForChanges() {
+        viewModel.getNotesList().observe(viewLifecycleOwner) { notes ->
+            if (notes.isEmpty()) {
+                binding.fragMainEmptyList.visibility = View.VISIBLE
+                notesAdapter.submitList(arrayListOf())
+            } else {
+                binding.fragMainEmptyList.visibility = View.GONE
+                notesAdapter.submitList(notes)
+            }
+        }
+    }
+
+    private fun setTitle() {
+        if (Firebase.auth.currentUser == null) {
+            findNavController().currentDestination?.label = "My Notes"
+        } else {
+            findNavController().currentDestination?.label =
+                Firebase.auth.currentUser.displayName + " 's Notes"
+        }
     }
 
     private fun setupEventHandling() {
@@ -95,7 +124,7 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
                         findNavController().navigate(action)
                     }
                     EventHandler.OpenTestingFragment -> {
-                        val action = FragmentMainDirections.actionGlobalConfirmationDialog()
+                        val action = FragmentMainDirections.actionGlobalFirebaseFragment()
                         findNavController().navigate(action)
                     }
                     is EventHandler.OpenEditNoteFragment -> {
@@ -112,9 +141,22 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
                         val action = FragmentMainDirections.actionGlobalFragmentProfile()
                         findNavController().navigate(action)
                     }
+                    is EventHandler.ShowConfirmationSnackBar -> {
+                        confirmationSnackbar(event.note)
+                    }
+                    is EventHandler.ShowSnackbar -> {
+                        Snackbar.make(requireView(), event.text, Snackbar.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
+    }
+
+    private fun confirmationSnackbar(note: Note) {
+        Snackbar.make(requireView(), "Galti se kiya kya?", Snackbar.LENGTH_LONG)
+            .setAction("Haan") {
+                viewModel.insertItem(note)
+            }.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -123,12 +165,9 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
         searchView = searchItem.actionView as SearchView
 
         searchView.onTextEntered { query ->
-            viewModel.searchQuery.value = query
+            viewModel.setSearchQuery(query)
         }
-
-
         super.onCreateOptionsMenu(menu, inflater)
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -141,8 +180,22 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
                 viewModel.profileMenuItemClicked()
             }
             R.id.menu_delete_user -> {
-
+                viewModel.deleteUserClicked()
             }
+            R.id.menu_sort_by_name -> {
+                viewModel.sortByNameMenuItemClicked()
+            }
+            R.id.menu_sort_by_date_created -> {
+                viewModel.sortByDateCreatedMenuItemClicked()
+            }
+            R.id.menu_ascending -> {
+                item.isChecked = !item.isChecked
+                viewModel.ascendingOrderToggleClicked(item.isChecked)
+            }
+            R.id.menu_delete_all_notes -> {
+                viewModel.deleteAllNotesClicked()
+            }
+
 
         }
         return super.onOptionsItemSelected(item)
@@ -150,5 +203,18 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
 
     override fun noteItemClicked(n: Note) {
         viewModel.noteItemClicked(n)
+    }
+
+    override fun onAuthStateChanged(auth: FirebaseAuth) {
+        if (auth.currentUser == null) {
+            binding.apply {
+                fragMainOnlineStatus.visibility = View.GONE
+            }
+        } else {
+            binding.apply {
+                fragMainOnlineStatus.visibility = View.VISIBLE
+            }
+        }
+
     }
 }

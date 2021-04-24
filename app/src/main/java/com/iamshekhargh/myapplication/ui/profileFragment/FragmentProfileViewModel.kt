@@ -39,8 +39,16 @@ class FragmentProfileViewModel @Inject constructor() : ViewModel() {
 
     private fun setUserEmail(email: String) {
         if (email.isNotEmpty()) {
-            user?.updateEmail(email)?.addOnCompleteListener {
-
+            if (email != user?.email) {
+                showProgressBar()
+                user?.updateEmail(email)?.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        showSnackBar("Email Updated")
+                    } else {
+                        showEmailError(task.exception?.message.toString())
+                    }
+                    hideProgressBar()
+                }
             }
         } else {
             showEmailError("Put email id in this box, God!!")
@@ -65,6 +73,7 @@ class FragmentProfileViewModel @Inject constructor() : ViewModel() {
     fun deleteUser() {}
 
     fun fabClicked(name: String, email: String, photoURL: String) {
+        showProgressBar()
         if (user != null) {
             if (name.isNotEmpty() && photoURL.isNotEmpty()) {
                 val profileUpdates = userProfileChangeRequest {
@@ -78,6 +87,7 @@ class FragmentProfileViewModel @Inject constructor() : ViewModel() {
                         task.exception?.message?.let { showSnackBar(it) }
                         task.exception?.printStackTrace()
                     }
+                    hideProgressBar()
                 }
             } else if (name.isEmpty()) {
                 showNameError("Name you should have!!")
@@ -112,6 +122,18 @@ class FragmentProfileViewModel @Inject constructor() : ViewModel() {
     private fun showPhotoError(text: String) = viewModelScope.launch {
         channelEvents.send(ProfileEvents.ShowPhotoError(text))
     }
+
+    fun loginClicked() = viewModelScope.launch {
+        channelEvents.send(ProfileEvents.OpenLoginFrag)
+    }
+
+    fun hideProgressBar() = viewModelScope.launch {
+        channelEvents.send(ProfileEvents.HideProgressBar)
+    }
+
+    fun showProgressBar() = viewModelScope.launch {
+        channelEvents.send(ProfileEvents.ShowProgressBar)
+    }
 }
 
 
@@ -121,5 +143,7 @@ sealed class ProfileEvents {
     data class ShowEmailError(val text: String) : ProfileEvents()
     data class ShowPhotoError(val text: String) : ProfileEvents()
     object OpenLoginFrag : ProfileEvents()
+    object HideProgressBar : ProfileEvents()
+    object ShowProgressBar : ProfileEvents()
 
 }

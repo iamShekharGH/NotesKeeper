@@ -1,5 +1,6 @@
 package com.iamshekhargh.myapplication.utils
 
+import android.util.Log
 import androidx.appcompat.widget.SearchView
 
 /**
@@ -19,4 +20,12 @@ inline fun SearchView.onTextEntered(crossinline listener: (String) -> Unit) {
 
     })
 
+}
+
+const val PRODUCTION = false
+
+fun logi(tag: String, text: String) {
+    if (!PRODUCTION){
+        Log.i(tag, text)
+    }
 }

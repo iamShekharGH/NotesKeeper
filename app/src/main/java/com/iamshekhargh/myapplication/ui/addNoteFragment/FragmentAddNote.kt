@@ -26,7 +26,6 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
     private val labelAdapter = LabelAdapter(this)
     private val TAG = "FragmentAddNote"
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -42,6 +41,7 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
                 viewModel.editNote?.labels?.forEach { label ->
                     viewModel.labelList.add(label)
                 }
+                addFragBookmark.isChecked = viewModel.editNote?.bookmark ?: false
                 updateLabelsRV()
             }
 
@@ -59,7 +59,8 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
             addFragSubmit.setOnClickListener {
                 viewModel.onSubmitClicked(
                     addFragHeading.text.toString(),
-                    addFragDescription.text.toString()
+                    addFragDescription.text.toString(),
+                    addFragBookmark.isChecked
                 )
             }
         }

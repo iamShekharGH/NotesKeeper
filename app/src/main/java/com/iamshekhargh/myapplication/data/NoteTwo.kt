@@ -5,6 +5,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by <<-- iamShekharGH -->>
@@ -18,9 +21,13 @@ class NoteTwo(
     val description: String,
     val bookmark: Boolean = false,
     val reminder: Long = 0,
-    @PrimaryKey
-    val current: Long = System.currentTimeMillis(),
     val labels: List<String> = ArrayList<String>(),
+    val current: Long = System.currentTimeMillis(),
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
 ) : Parcelable {
     val timeInNormal: String get() = DateFormat.getDateTimeInstance().format(current)
+    val simpleDate: String
+        get() = SimpleDateFormat("E, dd MMM", Locale.ENGLISH).format(
+            current
+        )
 }

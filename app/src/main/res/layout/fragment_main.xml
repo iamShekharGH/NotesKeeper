@@ -1,37 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frag_main_swiperl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.mainFragment.FragmentMain">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/frag_main_rv"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="8dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_note" />
+        android:layout_height="match_parent">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/frag_main_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:contentDescription="Add Item to Notes"
-        android:src="@mipmap/ic_plus_foreground"
-        tools:ignore="HardcodedText" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/frag_main_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"
+            android:scrollbars="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_note" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/frag_main_fab_testing_views"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
-        android:layout_margin="16dp"
-        android:contentDescription="Add Item to Notes"
-        android:src="@android:drawable/ic_dialog_dialer"
-        android:visibility="gone"
-        tools:ignore="HardcodedText" />
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/frag_main_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:contentDescription="Add Item to Notes"
+            android:src="@mipmap/ic_plus_foreground"
+            tools:ignore="HardcodedText" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/frag_main_fab_testing_views"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="16dp"
+            android:contentDescription="Add Item to Notes"
+            android:src="@android:drawable/ic_dialog_dialer"
+            android:visibility="visible"
+            tools:ignore="HardcodedText" />
+
+        <ImageView
+            android:id="@+id/frag_main_online_status"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="16dp"
+            android:src="@drawable/circle" />
+
+        <TextView
+            android:id="@+id/frag_main_empty_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:fontFamily="@font/hind_medium"
+            android:gravity="center"
+            android:text="Sorry, The list is empty"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="21sp"
+            android:visibility="gone" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

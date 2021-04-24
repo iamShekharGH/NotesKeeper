@@ -38,6 +38,7 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
 
     lateinit var googleSignInClient: GoogleSignInClient
 
+
     fun initialiseFirebaseAuth() {
         this.auth = Firebase.auth
     }
@@ -63,6 +64,8 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
                             Log.i(TAG, "startSignUp: sign up successful.")
                             user = auth.currentUser
                             showSnackbar("Sign Up ho gaya.")
+                            loginSuccessful()
+
                         }
                         task.exception is FirebaseAuthUserCollisionException -> {
                             Log.i(
@@ -90,6 +93,7 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
                 task.isSuccessful -> {
                     user = auth.currentUser
                     showSnackbar("Login Successful!")
+                    loginSuccessful()
                 }
                 task.exception is FirebaseAuthInvalidCredentialsException -> {
 //                    loginFailed("Password is wrong, IDIOT!")
@@ -103,6 +107,24 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+//    fun setResultContract(requireActivity: FragmentActivity) {
+//        resultContract =
+//            requireActivity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//                if (result.resultCode == Activity.RESULT_OK) {
+//                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+//                    try {
+//                        val account = task.getResult(ApiException::class.java)
+//                        firebaseAuthWithGoogle(account?.idToken)
+//
+//                    } catch (e: ApiException) {
+//                        Log.w(TAG, "--------- Google Sign In Failed : ", e)
+//                        e.printStackTrace()
+//                        showSnackbar("Sign In Failed.")
+//                    }
+//                }
+//            }
+//    }
+
     private fun showSnackbar(e: String) = viewModelScope.launch {
         eventsChannel.send(SignUpEvents.ShowSnackBar(e))
     }
@@ -113,6 +135,10 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
 
     private fun showSignInErrorWrongPassword(text: String) = viewModelScope.launch {
         eventsChannel.send(SignUpEvents.ShowPasswordEditTextError(text))
+    }
+
+    private fun loginSuccessful() = viewModelScope.launch {
+        eventsChannel.send(SignUpEvents.LoginSuccessful)
     }
 
     fun loginClicked(email: String, password: String, fragType: FirstFragArgs) =
@@ -138,13 +164,18 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     user = auth.currentUser
-                    showSnackbar("Login Successful!!")
+                    showSnackbar("Google Login Successful!!")
+                    loginSuccessful()
                 } else {
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     showSnackbar("Login Failed!! Kuch ni hoga tumse..")
                     task.exception?.printStackTrace()
                 }
             }
+    }
+
+    fun startGoogleSignIn() {
+        val signInIntent = googleSignInClient.signInIntent
     }
 
 
@@ -154,7 +185,8 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
 }
 
 sealed class SignUpEvents {
-    class ShowSnackBar(val text: String) : SignUpEvents()
-    class ShowEmailEditTextError(val text: String) : SignUpEvents()
-    class ShowPasswordEditTextError(val text: String) : SignUpEvents()
+    data class ShowSnackBar(val text: String) : SignUpEvents()
+    data class ShowEmailEditTextError(val text: String) : SignUpEvents()
+    data class ShowPasswordEditTextError(val text: String) : SignUpEvents()
+    object LoginSuccessful : SignUpEvents()
 }

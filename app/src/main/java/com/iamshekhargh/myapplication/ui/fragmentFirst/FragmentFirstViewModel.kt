@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FragmentFirstViewModel @Inject constructor() : ViewModel() {
 
-    val user: FirebaseUser? = Firebase.auth.currentUser
+    var user: FirebaseUser? = Firebase.auth.currentUser
 
     private val eventChannel = Channel<FirstFragEvent>()
     val eventsAsFlow = eventChannel.receiveAsFlow()
@@ -36,6 +36,10 @@ class FragmentFirstViewModel @Inject constructor() : ViewModel() {
         eventChannel.send(FirstFragEvent.SkipFragment)
     }
 
+    override fun onCleared() {
+        user = null
+        super.onCleared()
+    }
 
 }
 

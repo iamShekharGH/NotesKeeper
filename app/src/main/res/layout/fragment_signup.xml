@@ -11,12 +11,11 @@
         android:id="@+id/imageView"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/ic_launcher" />
+        app:srcCompat="@mipmap/ic_launcher_round" />
 
     <EditText
         android:id="@+id/signUpEmail"
@@ -24,6 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="64dp"
+        android:text="a@a.aa"
+        android:hint="Enter email"
         android:layout_marginEnd="32dp"
         android:ems="10"
         android:inputType="textEmailAddress"
@@ -36,6 +37,8 @@
         android:id="@+id/signUpPassword"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:text="aaaaaa"
+        android:hint="Enter password"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"

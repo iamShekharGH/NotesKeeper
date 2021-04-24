@@ -9,6 +9,23 @@
         android:title="Search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
+    <item
+        android:icon="@drawable/ic_filter"
+        android:title="Sort"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/menu_sort_by_name"
+                android:title="SORT BY NAME" />
+            <item
+                android:id="@+id/menu_sort_by_date_created"
+                android:title="Sort by Date" />
+            <item
+                android:id="@+id/menu_ascending"
+                android:checkable="true"
+                android:title="Ascending" />
+        </menu>
+    </item>
 
     <item
         android:id="@+id/menu_profile"
@@ -22,6 +39,11 @@
     <item
         android:id="@+id/menu_delete_user"
         android:title="Delete Profile"
+        app:showAsAction="never" />
+
+<item
+        android:id="@+id/menu_delete_all_notes"
+        android:title="Delete All Notes"
         app:showAsAction="never" />
 
 

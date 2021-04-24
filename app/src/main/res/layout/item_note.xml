@@ -7,14 +7,33 @@
     android:layout_marginStart="8dp"
     android:layout_marginTop="8dp"
     android:layout_marginEnd="8dp"
-    android:background="@drawable/background_note"
     app:cardCornerRadius="8dp">
+
+    <ImageView
+        android:id="@+id/note_bookmark"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="end|top"
+        android:layout_margin="4dp"
+        android:src="@drawable/ic_bookmark" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="8dp">
+
+        <TextView
+            android:id="@+id/note_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:fontFamily="@font/hind_medium"
+            android:hint="Heading"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:visibility="gone"
+            tools:text="Heading Number 1" />
 
         <TextView
             android:id="@+id/note_heading"
@@ -37,12 +56,26 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             tools:text="this is the description for the notes you are going to enter and here we will add a button to neeche save this note, what i am doing here is that i will do this and do that .. hahaha" />
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/note_rv_label"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager" />
+            app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager" />
+
+        <TextView
+            android:id="@+id/note_create_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="4dp"
+            android:drawablePadding="2dp"
+            android:fontFamily="@font/hind_medium"
+            android:gravity="bottom"
+            app:drawableStartCompat="@drawable/ic_calendar"
+            tools:text="Created on : 7th April 2020" />
+
     </LinearLayout>
 
 

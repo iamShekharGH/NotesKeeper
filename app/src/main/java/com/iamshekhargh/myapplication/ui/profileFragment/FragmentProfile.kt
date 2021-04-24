@@ -5,6 +5,8 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.iamshekhargh.myapplication.R
 import com.iamshekhargh.myapplication.databinding.FragmentProfileBinding
@@ -30,10 +32,35 @@ class FragmentProfile : Fragment(R.layout.fragment_profile) {
 
         binding = FragmentProfileBinding.bind(view)
         binding.apply {
+
             if (viewModel.user != null) {
-                // TODO update information in fb
+                val user = viewModel.user
+                if (user != null) {
+                    profileDetailsName.setText(user.displayName.orEmpty())
+                    profileDetailsEmail.setText(user.email.orEmpty())
+                    profileDetailsPhotoUrl.setText(user.photoUrl?.normalizeScheme().toString())
+                    Glide.with(requireContext()).load(user.photoUrl).centerCrop()
+                        .placeholder(R.mipmap.ic_launcher_round).into(profileImage)
+
+                    profileFab.visibility = View.VISIBLE
+                    profileImage.visibility = View.VISIBLE
+                    profileLogin.visibility = View.INVISIBLE
+
+                }
             } else {
-                // TODO ask for information.
+                Snackbar.make(
+                    requireView(),
+                    "Please Enter information and submit.",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+                profileDetailsName.isFocusable = false
+                profileDetailsEmail.isFocusable = false
+                profileDetailsPhotoUrl.isFocusable = false
+
+                profileFab.visibility = View.GONE
+                profileImage.visibility = View.GONE
+
+                profileLogin.visibility = View.VISIBLE
             }
 
             profileFab.setOnClickListener {
@@ -43,8 +70,11 @@ class FragmentProfile : Fragment(R.layout.fragment_profile) {
                     profileDetailsPhotoUrl.text.toString()
                 )
             }
-        }
 
+            profileLogin.setOnClickListener {
+                viewModel.loginClicked()
+            }
+        }
         setupUIEvents()
     }
 
@@ -67,7 +97,21 @@ class FragmentProfile : Fragment(R.layout.fragment_profile) {
             profileDetailsPhotoUrl.error = message
             profileDetailsPhotoUrl.requestFocus()
         }
+    }
 
+    private fun showProgressBar() {
+        binding.apply {
+            progressBar.visibility = View.VISIBLE
+            progressBar.isIndeterminate = true
+        }
+
+    }
+
+    private fun hideProgressBar() {
+        binding.apply {
+            progressBar.visibility = View.INVISIBLE
+            progressBar.isIndeterminate = true
+        }
     }
 
 
@@ -88,12 +132,19 @@ class FragmentProfile : Fragment(R.layout.fragment_profile) {
                         Snackbar.make(requireView(), event.text, Snackbar.LENGTH_LONG).show()
                     }
                     ProfileEvents.OpenLoginFrag -> {
+                        val action = FragmentProfileDirections.actionGlobalFragmentFirst()
+                        findNavController().popBackStack()
+                        findNavController().navigate(action)
 
                     }
+                    ProfileEvents.HideProgressBar -> {
+                        hideProgressBar()
+                    }
+                    ProfileEvents.ShowProgressBar -> {
+                        showProgressBar()
+                    }
                 }
-
             }
-
         }
     }
 }

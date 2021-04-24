@@ -2,6 +2,5 @@
 <layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
     android:animation="@anim/slide_out"
     android:animationOrder="normal"
-    android:delay="15%">
-
-</layoutAnimation>
+    android:delay="0%"/>
+<!--ye uper ka delay is for between each item-->

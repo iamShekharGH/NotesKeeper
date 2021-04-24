@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_first_frag"
     tools:context=".ui.fragmentFirst.FragmentFirst">
 
     <ImageView
@@ -12,7 +11,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="128dp"
-        android:alpha="0.90"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toTopOf="@+id/firstfrag_skip"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,7 +26,6 @@
         android:layout_marginStart="64dp"
         android:fontFamily="@font/hind_medium"
         android:text="Sign UP"
-        android:textColor="@color/white"
         android:textSize="21sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,12 +39,53 @@
         android:layout_marginEnd="64dp"
         android:fontFamily="@font/hind_medium"
         android:text="Sign IN"
-        android:textColor="@color/white"
         android:textSize="21sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/firstfrag_signup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/firstfrag_signup" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/firstfrag_skip">
+
+        <TextView
+            android:id="@+id/firstfrag_timer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/primaryLightColor"
+            android:gravity="center"
+            android:padding="4dp"
+            android:paddingEnd="20dp"
+            android:text="Loging into accout in "
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/firstfrag_timer_stop"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/firstfrag_timer_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="end"
+            android:padding="4dp"
+            android:paddingStart="7dp"
+            android:paddingEnd="7dp"
+            android:text="STOP"
+            android:textColor="@color/primaryLightColor"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/firstfrag_timer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/firstfrag_timer"
+            app:layout_constraintTop_toTopOf="@+id/firstfrag_timer" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/firstfrag_skip"
@@ -58,7 +96,7 @@
         android:fontFamily="@font/hind_medium"
         android:text="Skip >"
         android:textAlignment="viewEnd"
-        android:textColor="@color/white"
+        android:textColor="@color/textColor"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

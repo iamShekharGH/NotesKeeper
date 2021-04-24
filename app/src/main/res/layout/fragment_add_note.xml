@@ -84,38 +84,57 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/add_frag_addReminder" />
 
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/background_label"
-                android:orientation="horizontal"
-                android:weightSum="10">
+                android:layout_height="wrap_content">
 
-                <EditText
-                    android:id="@+id/add_frag_label_et_name"
-                    android:layout_width="wrap_content"
+                <com.google.android.material.chip.Chip
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="9"
-                    android:background="@null"
-                    android:hint="Enter Label"
-                    android:inputType="text"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="0dp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
+                    app:chipMinTouchTargetSize="0dp" />
 
-                <ImageView
-                    android:id="@+id/add_frag_label_iv_add"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:contentDescription="Add Label to note."
-                    android:src="@mipmap/ic_plus_foreground" />
-            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="10">
+
+                    <EditText
+                        android:id="@+id/add_frag_label_et_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="9"
+                        android:background="@null"
+                        android:hint="Enter Label"
+                        android:inputType="text"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="0dp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/add_frag_label_iv_add"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        app:tint="#6b6a6c"
+                        android:layout_weight="1"
+                        android:contentDescription="Add Label to note."
+                        android:src="@mipmap/ic_plus_foreground" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/add_frag_bookmark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:padding="0dp"
+                android:text="Bookmark"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <Button
                 android:id="@+id/add_frag_submit"

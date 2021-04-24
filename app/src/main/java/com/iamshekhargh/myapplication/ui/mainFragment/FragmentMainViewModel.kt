@@ -1,16 +1,17 @@
 package com.iamshekhargh.myapplication.ui.mainFragment
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.iamshekhargh.myapplication.data.Note
-import com.iamshekhargh.myapplication.data.NotesDao
+import com.iamshekhargh.myapplication.datastore.DataStoreManager
+import com.iamshekhargh.myapplication.datastore.SortOrder
+import com.iamshekhargh.myapplication.repository.NotesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,29 +23,35 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class FragmentMainViewModel @Inject constructor(
-    private val notesDao: NotesDao,
-    private val state: SavedStateHandle
+    private val repository: NotesRepository,
+    private val state: SavedStateHandle,
+    private val dataStorePrefs: DataStoreManager,
 ) : ViewModel() {
 
     private val channel = Channel<EventHandler>()
     val channelFlow = channel.receiveAsFlow()
 
-    val searchQuery = MutableStateFlow("")
+    fun getNotesList(): LiveData<List<Note>> {
+        return repository.notes
+    }
 
-    val notesList = notesDao.getAllNotes().asLiveData()
+    fun setSearchQuery(text: String) {
+        repository.setSearchQuery(text)
+    }
 
     fun fabClicked() = viewModelScope.launch {
         channel.send(EventHandler.OpenAddNoteFragment)
     }
-
 
     fun testFabClicked() = viewModelScope.launch {
         channel.send(EventHandler.OpenTestingFragment)
     }
 
     fun itemSwiped(note: Note?) = viewModelScope.launch {
-        // TODO give a undo option here!!
-        note?.let { notesDao.deleteNote(it) }
+        note?.let { n ->
+            repository.deleteNote(n)
+            channel.send(EventHandler.ShowConfirmationSnackBar(note))
+        }
     }
 
     fun noteItemClicked(n: Note) = viewModelScope.launch {
@@ -59,11 +66,41 @@ class FragmentMainViewModel @Inject constructor(
         channel.send(EventHandler.OpenProfileFragment)
     }
 
+    fun deleteUserClicked() {
+        // add a confirmation alert dialog.
+        // Then delete user from fireStore.
+    }
+
+    fun ascendingOrderToggleClicked(isAscending: Boolean) = viewModelScope.launch {
+        dataStorePrefs.setAscendingOrderBool(isAscending)
+    }
+
+    fun insertItem(note: Note) = viewModelScope.launch {
+        repository.insertNote(note)
+    }
+
+    fun deleteAllNotesClicked() = viewModelScope.launch {
+        repository.deleteAllNotes()
+    }
+
+    fun swipePulled() = viewModelScope.launch {
+        channel.send(EventHandler.ShowSnackbar("Kya ?"))
+    }
+
+    fun sortByNameMenuItemClicked() = viewModelScope.launch {
+        dataStorePrefs.setSortOrder(SortOrder.SORT_BY_NAME)
+    }
+
+    fun sortByDateCreatedMenuItemClicked() = viewModelScope.launch {
+        dataStorePrefs.setSortOrder(SortOrder.SORT_BY_DATE_CREATED)
+    }
 }
 
 sealed class EventHandler {
-    class OpenEditNoteFragment(val note: Note) : EventHandler()
+    data class OpenEditNoteFragment(val note: Note) : EventHandler()
     object OpenTestingFragment : EventHandler()
     object OpenAddNoteFragment : EventHandler()
     object OpenProfileFragment : EventHandler()
+    data class ShowConfirmationSnackBar(val note: Note) : EventHandler()
+    data class ShowSnackbar(val text: String) : EventHandler()
 }

@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iamshekhargh.myapplication.data.Note
-import com.iamshekhargh.myapplication.data.NotesDao
+import com.iamshekhargh.myapplication.repository.NotesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -18,7 +18,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class FragmentAddNoteViewModel @Inject constructor(
-    private val notesDao: NotesDao
+    private val repository: NotesRepository,
 ) : ViewModel() {
     private val channel = Channel<EventsAddNote>()
     val channelFlow = channel.receiveAsFlow()
@@ -29,7 +29,7 @@ class FragmentAddNoteViewModel @Inject constructor(
 
     fun onSubmitClicked(note: Note) = viewModelScope.launch {
         if (note.heading.isNotEmpty()) {
-            notesDao.insertNote(note)
+            repository.insertNote(note)
             channel.send(EventsAddNote.PopTheFragment)
 
         } else channel.send(EventsAddNote.HeadingIsEmpty("Heading cannot be Empty."))
@@ -47,20 +47,37 @@ class FragmentAddNoteViewModel @Inject constructor(
         }
     }
 
-    fun onSubmitClicked(heading: String, description: String) = viewModelScope.launch {
-        if (heading.isNotEmpty()) {
-            val note = Note(
-                heading = heading,
-                description = description,
-                labels = labelList.toList()
-            )
+    fun onSubmitClicked(heading: String, description: String, bookmark: Boolean) =
+        viewModelScope.launch {
+            if (heading.isNotEmpty()) {
 
-            notesDao.insertNote(note)
-            channel.send(EventsAddNote.PopTheFragment)
-        } else {
-            channel.send(EventsAddNote.HeadingIsEmpty("Heading cannot be Empty."))
+                if (editNote == null) {
+                    val note = Note(
+                        heading = heading,
+                        description = description,
+                        labels = labelList.toList(),
+                        bookmark = bookmark
+                    )
+                    repository.insertNote(note)
+                } else {
+                    val note = Note(
+                        heading = heading,
+                        description = description,
+                        labels = labelList.toList(),
+                        bookmark = bookmark,
+                        current = editNote!!.current,
+                        reminder = editNote!!.reminder,
+                        id = editNote!!.id,
+                    )
+
+                    repository.updateNote(note)
+                }
+
+                channel.send(EventsAddNote.PopTheFragment)
+            } else {
+                channel.send(EventsAddNote.HeadingIsEmpty("Heading cannot be Empty."))
+            }
         }
-    }
 
     fun openLabelAdder(label: String) = viewModelScope.launch {
         channel.send(EventsAddNote.OpenAddLabelDialog)
@@ -81,7 +98,6 @@ class FragmentAddNoteViewModel @Inject constructor(
 
     fun loadNoteItem(note: Note?) {
         editNote = note
-
     }
 }
 

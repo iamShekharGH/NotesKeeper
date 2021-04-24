@@ -1,20 +1,16 @@
 package com.iamshekhargh.myapplication.datastore
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
-import com.iamshekhargh.myapplication.data.Note
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import java.io.IOException
+import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
@@ -22,19 +18,31 @@ import javax.inject.Singleton
  * on 15 April 2021
  * at 2:15 PM.
  */
+
+data class InformationPrefs(
+    val label: String,
+    val labelList: String,
+    val sortOrder: SortOrder,
+    val searchQuery: String,
+    val ascending: Boolean
+)
+
+enum class SortOrder { SORT_BY_NAME, SORT_BY_DATE_CREATED }
+
 @Singleton
-class DataStoreManager(c: Context) {
+class DataStoreManager @Inject constructor(c: Application) {
     private val TAG = "DataStoreManager"
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "com.iamshekhargh.myapplication")
     private val mDataStore = c.dataStore
 
     private object PreferenceKeys {
-        val LABEL_KEY = stringPreferencesKey("labelList")
+        val LABEL_KEY = stringPreferencesKey("label")
+        val LABEL_LIST_KEY = stringPreferencesKey("labelList")
+        val SORT_ORDER = stringPreferencesKey("sortOrder")
+        val SEARCH_QUERY = stringPreferencesKey("searchQuery")
+        val ASCENDING_ORDER = booleanPreferencesKey("ascendingOrder")
     }
-
-    private val labelKey = stringPreferencesKey("labelList")
-    val emptyList: MutableList<String> = arrayListOf()
 
     val prefFlow = mDataStore.data
         .catch { e ->
@@ -43,76 +51,70 @@ class DataStoreManager(c: Context) {
                 e.printStackTrace()
                 emit(emptyPreferences())
             } else throw e
-        }
-        .map { prefs ->
-            val label = prefs[PreferenceKeys.LABEL_KEY]
+        }.map { prefs ->
+            val label = prefs[PreferenceKeys.LABEL_KEY] ?: ""
+            val labelList = prefs[PreferenceKeys.LABEL_LIST_KEY] ?: ""
+            val sortOrder =
+                SortOrder.valueOf(prefs[PreferenceKeys.SORT_ORDER] ?: SortOrder.SORT_BY_NAME.name)
+            val query = prefs[PreferenceKeys.SEARCH_QUERY] ?: ""
+            val ascendingOrder = prefs[PreferenceKeys.ASCENDING_ORDER] ?: true
 
+            InformationPrefs(label, labelList, sortOrder, query, ascendingOrder)
         }
-
-//    val labelList: Flow<MutableList<String>> = mDataStore.data.catch {
-//        if (it is IOException) {
-//            it.printStackTrace()
-//            emit(emptyPreferences())
-//        } else {
-//            throw it
-//        }
-//    }.map { preferences ->
-//        preferences[labelKey] ?: emptyList
-//
-//    }
 
     suspend fun saveLabelList(ll: MutableList<String>) {
         val g: Gson = Gson()
         val llStr = g.toJson(ll)
         mDataStore.edit { pref ->
-            pref[labelKey] = llStr
+            pref[PreferenceKeys.LABEL_LIST_KEY] = llStr
         }
     }
 
     fun getLabelList(): MutableList<String> {
+        // I can also send the entire note object and then access the labels item from it.
+        // But m doing this.
+
         val g: Gson = Gson()
         var list: MutableList<String> = arrayListOf()
         mDataStore.data.map { prefs ->
-            val s = prefs[labelKey]
-            if (g.fromJson(s, Note::class.java) != null)
-                list =
-                    (g.fromJson(s, Note::class.java) ?: arrayListOf(String)) as MutableList<String>
+            val s = prefs[PreferenceKeys.LABEL_LIST_KEY] ?: ""
+
+            if (g.fromJson(s, list::class.java) != null) {
+                list = g.fromJson(s, list::class.java)
+            }
+
+//            if (g.fromJson(s, Note::class.java) != null)
+//                list =
+//                    (g.fromJson(s, Note::class.java).labels
+//                        ?: arrayListOf(String)) as MutableList<String>
         }
         return list
     }
 
-    val label: Flow<String> = mDataStore.data.map { preferences ->
-        preferences[labelKey] ?: ""
-    }
-
-
-    private suspend fun writeToDataStore(label: String) {
-
-//        requireContext().dataStore.edit { file ->
-        mDataStore.edit { file ->
-            file[labelKey] = label
+    suspend fun setSearchQuery(q: String) {
+        mDataStore.edit { pref ->
+            pref[PreferenceKeys.SEARCH_QUERY] = q
         }
     }
 
-    private suspend fun readFromDataStore(): String {
-//        val labelFlow: Flow<String> = requireContext().dataStore.data
-        val labelFlow: Flow<String> = mDataStore.data.map { preferences ->
-            preferences[labelKey] ?: ""
+    fun getSearchQuery(): String {
+        var q = ""
+        mDataStore.data.map { pref ->
+            q = pref[PreferenceKeys.SEARCH_QUERY] ?: ""
         }
-        var l = ""
-        labelFlow.collect { value ->
-            l = value
-        }
-        Log.i("", "testingDatastore: Write returning $l")
-
-        return l
+        return q
     }
 
-    private fun testingDatastore() {
-        val text = " Trying to save this #####"
-
-
+    suspend fun setAscendingOrderBool(order: Boolean) {
+        mDataStore.edit { pref ->
+            pref[PreferenceKeys.ASCENDING_ORDER] = order
+        }
     }
 
+    suspend fun setSortOrder(sortOrder: SortOrder) {
+        mDataStore.edit { pref ->
+            pref[PreferenceKeys.SORT_ORDER] = sortOrder.name
+        }
+    }
 
 }

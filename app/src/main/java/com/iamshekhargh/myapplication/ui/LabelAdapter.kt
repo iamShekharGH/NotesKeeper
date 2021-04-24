@@ -2,11 +2,9 @@ package com.iamshekhargh.myapplication.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.iamshekhargh.myapplication.databinding.LabelNoteItemBinding
-import com.iamshekhargh.myapplication.databinding.LabelNoteItemLongBinding
+import com.iamshekhargh.myapplication.databinding.ItemChipBinding
 
 /**
  * Created by <<-- iamShekharGH -->>
@@ -16,18 +14,15 @@ import com.iamshekhargh.myapplication.databinding.LabelNoteItemLongBinding
 class LabelAdapter(private val listener: LabelAdapterListEditingOptions?) :
     ListAdapter<String, LabelAdapter.LabelViewHolder>(DiffUtil()) {
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LabelViewHolder {
 
-        val binding =
-            LabelNoteItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        val bindingLong =
-            LabelNoteItemLongBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val bindingChip =
+            ItemChipBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return if (listener == null) {
-            LabelViewHolder(binding, bindingLong, null)
+            LabelViewHolder(bindingChip, null)
         } else {
-            LabelViewHolder(binding, bindingLong, listener)
+            LabelViewHolder(bindingChip, listener)
         }
     }
 
@@ -36,41 +31,29 @@ class LabelAdapter(private val listener: LabelAdapterListEditingOptions?) :
 
     }
 
-//    override fun deleteItem(position: Int) {
-//        val newLIst = ArrayList(currentList)
-//        newLIst.remove(currentList[position])
-//        submitList(newLIst)
-//
-//    }
-
-
     class LabelViewHolder(
-        private val binding: LabelNoteItemBinding,
-        private val bindingLong: LabelNoteItemLongBinding,
+//        private val binding: LabelNoteItemBinding,
+//        private val bindingLong: LabelNoteItemLongBinding,
+        private val binding: ItemChipBinding,
         private val listener: LabelAdapterListEditingOptions?
     ) :
-        RecyclerView.ViewHolder(if (listener == null) binding.root else bindingLong.root) {
-
+//        RecyclerView.ViewHolder(if (listener == null) binding.root else bindingLong.root) {
+        RecyclerView.ViewHolder(binding.root) {
 
 
         fun bind(s: String) {
             if (listener == null) {
                 binding.apply {
-                    labelTvLabel.setText(s)
-                    labelTvLabel.isFocusable = false
+                    labelTvLabel.text = s
+//                    labelTvLabel.isFocusable = false
+                    labelTvLabel.isCloseIconVisible = false
                 }
 
             } else {
-                bindingLong.apply {
-                    labelTvLabel.setText(s)
-
-                    labelIvRemove.setOnClickListener() {
-//                    onClickOperations.deleteItem(adapterPosition)
+                binding.apply {
+                    labelTvLabel.text = s
+                    labelTvLabel.setOnCloseIconClickListener() {
                         listener.deleteLabel(adapterPosition)
-                    }
-
-                    labelTvLabel.addTextChangedListener { newText ->
-                        listener.editLabel(adapterPosition, newText.toString())
                     }
                 }
             }

@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.iamshekhargh.myapplication">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -9,7 +11,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/DhartiSunehariUlta">
+        android:theme="@style/MyThemeColor">
         <activity
             android:name=".ui.MainActivity"
             android:windowSoftInputMode="adjustResize">

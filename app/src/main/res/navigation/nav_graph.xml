@@ -13,15 +13,12 @@
         <action
             android:id="@+id/action_fragmentMain_to_fragmentAddNote"
             app:destination="@id/fragmentAddNote" />
-        <argument
-            android:name="whereTo"
-            android:defaultValue="SKIP"
-            app:argType="com.iamshekhargh.myapplication.utils.FirstFragArgs" />
     </fragment>
+
     <fragment
         android:id="@+id/fragmentAddNote"
         android:name="com.iamshekhargh.myapplication.ui.addNoteFragment.FragmentAddNote"
-        android:label="Add Fragment"
+        android:label="Edit Note"
         tools:layout="@layout/fragment_add_note">
         <argument
             android:name="label"
@@ -36,6 +33,7 @@
             android:defaultValue="Add Note"
             app:argType="string" />
     </fragment>
+
     <dialog
         android:id="@+id/confirmationDialog"
         android:name="com.iamshekhargh.myapplication.ui.utils.ConfirmationDialog"
@@ -45,27 +43,35 @@
             android:id="@+id/action_confirmationDialog_to_fragmentAddNote"
             app:destination="@id/fragmentAddNote" />
     </dialog>
+
     <action
         android:id="@+id/action_global_confirmationDialog"
         app:destination="@id/confirmationDialog"
         app:enterAnim="@anim/nav_default_pop_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim" />
+
     <fragment
         android:id="@+id/fragmentSignUp"
         android:name="com.iamshekhargh.myapplication.ui.signUpFragment.FragmentSignUp"
-        android:label="fragment_signup"
+        android:label="User Login"
         tools:layout="@layout/fragment_signup">
         <argument
             android:name="whereTo"
             android:defaultValue="SIGN_UP"
             app:argType="com.iamshekhargh.myapplication.utils.FirstFragArgs" />
+
+        <action
+            android:id="@+id/action_fragmentSignUp_to_fragmentMain"
+            app:destination="@id/fragmentMain"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
+
     <fragment
         android:id="@+id/fragmentFirst"
         android:name="com.iamshekhargh.myapplication.ui.fragmentFirst.FragmentFirst"
         android:label="FragmentFirst"
         tools:layout="@layout/fragment_first">
-
         <action
             android:id="@+id/action_fragmentFirst_to_fragmentSignUp"
             app:destination="@id/fragmentSignUp"
@@ -76,12 +82,12 @@
             app:destination="@id/fragmentMain"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim" />
-
     </fragment>
+
     <fragment
         android:id="@+id/fragmentProfile"
         android:name="com.iamshekhargh.myapplication.ui.profileFragment.FragmentProfile"
-        android:label="fragment_profile"
+        android:label="Profile"
         tools:layout="@layout/fragment_profile" />
     <action
         android:id="@+id/action_global_fragmentProfile"
@@ -89,4 +95,14 @@
     <action
         android:id="@+id/action_global_fragmentFirst"
         app:destination="@id/fragmentFirst" />
+
+    <fragment
+        android:id="@+id/firebaseFragment"
+        android:name="com.iamshekhargh.myapplication.ui.proofOfConceptForSelf.TestingFragmentForDevelopment"
+        android:label="fragment_temp_etc"
+        tools:layout="@layout/fragment_temp_etc" />
+    <action
+        android:id="@+id/action_global_firebaseFragment"
+        app:destination="@id/firebaseFragment" />
+
 </navigation>
