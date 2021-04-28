@@ -3,12 +3,15 @@ package com.iamshekhargh.myapplication.ui.addNoteFragment
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.iamshekhargh.myapplication.data.Note
 import com.iamshekhargh.myapplication.repository.NotesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -20,10 +23,12 @@ import javax.inject.Inject
 class FragmentAddNoteViewModel @Inject constructor(
     private val repository: NotesRepository,
 ) : ViewModel() {
+    var cal: Calendar = Calendar.getInstance()
     private val channel = Channel<EventsAddNote>()
     val channelFlow = channel.receiveAsFlow()
     private val TAG = "FragmentAddNoteViewMode"
     var editNote: Note? = null
+    var reminder: Long = 0
 
     val labelList: MutableList<String> = arrayListOf()
 
@@ -50,17 +55,19 @@ class FragmentAddNoteViewModel @Inject constructor(
     fun onSubmitClicked(heading: String, description: String, bookmark: Boolean) =
         viewModelScope.launch {
             if (heading.isNotEmpty()) {
-
                 if (editNote == null) {
+
                     val note = Note(
                         heading = heading,
                         description = description,
                         labels = labelList.toList(),
-                        bookmark = bookmark
+                        bookmark = bookmark,
+                        firebaseUserId = getUid(),
+                        reminder = if (cal.get(Calendar.YEAR) != 1990) cal.timeInMillis else 0
                     )
                     repository.insertNote(note)
                 } else {
-                    val note = Note(
+                    val note = editNote!!.copy(
                         heading = heading,
                         description = description,
                         labels = labelList.toList(),
@@ -78,6 +85,10 @@ class FragmentAddNoteViewModel @Inject constructor(
                 channel.send(EventsAddNote.HeadingIsEmpty("Heading cannot be Empty."))
             }
         }
+
+    fun getUid(): String {
+        return Firebase.auth.currentUser?.uid ?: ""
+    }
 
     fun openLabelAdder(label: String) = viewModelScope.launch {
         channel.send(EventsAddNote.OpenAddLabelDialog)

@@ -1,5 +1,7 @@
 package com.iamshekhargh.myapplication.ui.addNoteFragment
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -13,6 +15,8 @@ import com.iamshekhargh.myapplication.ui.LabelAdapter
 import com.iamshekhargh.myapplication.ui.LabelAdapterListEditingOptions
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by <<-- iamShekharGH -->>
@@ -24,14 +28,18 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
 
     private val viewModel: FragmentAddNoteViewModel by viewModels()
     private val labelAdapter = LabelAdapter(this)
+    lateinit var binding: FragmentAddNoteBinding
     private val TAG = "FragmentAddNote"
+
+    lateinit var datePickerDialog: DatePickerDialog
+    lateinit var timePickerDialog: TimePickerDialog
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        restoreFragment()
+        fillFragmentWithDetails()
 
-        val binding = FragmentAddNoteBinding.bind(view)
+        binding = FragmentAddNoteBinding.bind(view)
         binding.apply {
 
             // When edit note clicked.
@@ -42,10 +50,17 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
                     viewModel.labelList.add(label)
                 }
                 addFragBookmark.isChecked = viewModel.editNote?.bookmark ?: false
-                updateLabelsRV()
+                updateLabelsInRV()
             }
 
+            // by default so no alarms trigger if nothing is selected.
+            viewModel.cal.set(Calendar.YEAR, 1990)
             addFragLable.adapter = labelAdapter
+
+            addFragAddReminder.setOnClickListener {
+                showDateTimePicker()
+            }
+
             addFragLabelIvAdd.setOnClickListener {
 //                Here i have to store list in shared pref or DataStore on exit to DialogFrag and then ulta.
 //                viewModel.openLabelAdder(addFragLabelEtName.text.toString())
@@ -68,8 +83,44 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
         setupEvents()
     }
 
+    private fun showDateTimePicker() {
+        // This c is for setting a limit to reminders.
+        val c = Calendar.getInstance()
+        datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, year, monthOfYear, dayOfMonth ->
 
-    private fun restoreFragment() {
+                timePickerDialog = TimePickerDialog(
+                    requireContext(),
+                    { _, hourOfDay, minute ->
+
+                        viewModel.cal.set(Calendar.YEAR, year)
+                        viewModel.cal.set(Calendar.MONTH, monthOfYear)
+                        viewModel.cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                        viewModel.cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                        viewModel.cal.set(Calendar.MINUTE, minute)
+
+                        binding.addFragAddReminderText.text =
+                            SimpleDateFormat("E, dd MMM, hh:mm a", Locale.ENGLISH).format(
+                                viewModel.cal.timeInMillis
+                            )
+                    },
+                    c.get(Calendar.HOUR_OF_DAY),
+                    c.get(Calendar.MINUTE),
+                    false
+                )
+                timePickerDialog.show()
+            },
+            c.get(Calendar.YEAR),
+            c.get(Calendar.MONTH),
+            c.get(Calendar.DATE)
+        )
+        datePickerDialog.datePicker.minDate = (c.timeInMillis - 1000)
+        datePickerDialog.show()
+    }
+
+
+    private fun fillFragmentWithDetails() {
         if (arguments != null) {
             val args = FragmentAddNoteArgs.fromBundle(requireArguments())
 
@@ -77,7 +128,7 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
             val l = args.label
             if (l != null && l.isNotEmpty()) {
                 viewModel.newLabelEntered(l)
-                updateLabelsRV()
+                updateLabelsInRV()
             }
 
             // for edit note.
@@ -105,7 +156,7 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
                         findNavController().popBackStack()
                     }
                     is EventsAddNote.AddLabelToTheNote -> {
-                        updateLabelsRV()
+                        updateLabelsInRV()
                     }
                     EventsAddNote.OpenAddLabelDialog -> {
                         val action = FragmentAddNoteDirections.actionGlobalConfirmationDialog()
@@ -119,20 +170,18 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
     override fun deleteLabel(position: Int) {
         val label = labelAdapter.currentList[position]
         viewModel.labelList.remove(label)
-        updateLabelsRV()
+        updateLabelsInRV()
     }
 
     override fun editLabel(position: Int, newText: String) {
         viewModel.labelList.remove(labelAdapter.currentList[position])
         viewModel.addLabelClicked(newText)
-        updateLabelsRV()
+        updateLabelsInRV()
     }
 
-    private fun updateLabelsRV() {
+    private fun updateLabelsInRV() {
         labelAdapter.submitList(viewModel.getTheLabelList())
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
+
 }

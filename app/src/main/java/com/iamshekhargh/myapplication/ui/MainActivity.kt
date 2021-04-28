@@ -1,7 +1,10 @@
 package com.iamshekhargh.myapplication.ui
 
+import android.app.PictureInPictureParams
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -26,7 +29,14 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController)
 
-        viewModel.notesSyncFunctions()
+        //viewModel.notesSyncFunctions()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun enterPIP(){
+        val params = PictureInPictureParams.Builder().build()
+        enterPictureInPictureMode(params)
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

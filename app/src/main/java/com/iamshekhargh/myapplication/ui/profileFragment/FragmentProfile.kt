@@ -2,6 +2,7 @@ package com.iamshekhargh.myapplication.ui.profileFragment
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.graphics.rotationMatrix
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -13,6 +14,8 @@ import com.iamshekhargh.myapplication.databinding.FragmentProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
+//q -> n435cCrlOuefk4zUt1bfcf9WfJ02
+//a -> DzDdek7YrjRh3PHU1S18f6Pa0BJ2
 /**
  * Created by <<-- iamShekharGH -->>
  * on 17 April 2021
@@ -41,6 +44,25 @@ class FragmentProfile : Fragment(R.layout.fragment_profile) {
                     profileDetailsPhotoUrl.setText(user.photoUrl?.normalizeScheme().toString())
                     Glide.with(requireContext()).load(user.photoUrl).centerCrop()
                         .placeholder(R.mipmap.ic_launcher_round).into(profileImage)
+
+                    profileDetailsUid.text = user.uid
+
+                    profileImage.setOnClickListener {
+                        profileImage.animate().apply {
+                            duration = 2000
+                            rotationXBy(360f)
+                        }.withEndAction {
+                            profileImage.animate().apply {
+                                duration = 2000
+                                rotationYBy(360f)
+                            }.withEndAction {
+                                profileImage.animate().apply {
+                                    duration = 1000
+                                    rotationYBy(180f)
+                                }
+                            }
+                        }.start()
+                    }
 
                     profileFab.visibility = View.VISIBLE
                     profileImage.visibility = View.VISIBLE
@@ -104,7 +126,6 @@ class FragmentProfile : Fragment(R.layout.fragment_profile) {
             progressBar.visibility = View.VISIBLE
             progressBar.isIndeterminate = true
         }
-
     }
 
     private fun hideProgressBar() {
@@ -113,7 +134,6 @@ class FragmentProfile : Fragment(R.layout.fragment_profile) {
             progressBar.isIndeterminate = true
         }
     }
-
 
     private fun setupUIEvents() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {

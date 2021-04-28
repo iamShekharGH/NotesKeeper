@@ -23,47 +23,12 @@ class TestingFragmentForDevelopment : Fragment(R.layout.fragment_temp_etc) {
     private val TAG = "FirebaseFragment"
 
     lateinit var binding: FragmentTempEtcBinding
-    var db = Firebase.firestore
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentTempEtcBinding.bind(view)
 
-        binding.apply {
-            val user = hashMapOf(
-                "heading" to heading.text.toString(),
-                "description" to description.text.toString(),
-                "labels" to arrayListOf<String>(),
-                "bookmark" to
-                        "currentTime" to System.currentTimeMillis(),
-                "reminder" to reminderTime.text.toString()
-            )
-
-            submit.setOnClickListener {
-                if (heading.text.isNotEmpty()) {
-                    val ll = arrayListOf<String>(
-                        label1.text.toString(),
-                        label2.text.toString(),
-                        label1.text.toString(),
-                        label2.text.toString(),
-                        label1.text.toString(),
-                        label2.text.toString(),
-                        label1.text.toString(),
-                        label2.text.toString(),
-
-                        )
-                    val note = Note(
-                        heading = heading.text.toString(),
-                        description = description.text.toString(),
-                        labels = ll,
-                        bookmark = bookmark.isChecked,
-                    )
-                    doTheDB(note)
-
-                }
-            }
-
-        }
 
     }
 
@@ -72,6 +37,7 @@ class TestingFragmentForDevelopment : Fragment(R.layout.fragment_temp_etc) {
     }
 
     private fun doTheDB(note: Note?) {
+        var db = Firebase.firestore
         if (note == null) {
             val aa = arrayListOf<String>(
                 "name",
@@ -82,7 +48,7 @@ class TestingFragmentForDevelopment : Fragment(R.layout.fragment_temp_etc) {
                 "safdaswfsdvc"
             )
             db.collection("testNote")
-                .add(Note("this", "is", aa, true))
+                .add(Note("this", "is", "noUser", aa, true))
                 .addOnSuccessListener { documentReference ->
                     Snackbar.make(
                         requireView(),

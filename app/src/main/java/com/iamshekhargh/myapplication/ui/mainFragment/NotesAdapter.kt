@@ -50,7 +50,14 @@ class NotesAdapter constructor(private val listener: OnNoteClicked) :
 
                 noteCreateOn.visibility = View.VISIBLE
                 noteCreateOn.text = note.simpleDate
-                noteId.text = note.id.toString()
+
+                noteId.text = note.firebaseUserId
+
+                if (note.firebaseUserId.isNotEmpty()) {
+                    noteOnFirebase.visibility = View.VISIBLE
+                } else {
+                    noteOnFirebase.visibility = View.GONE
+                }
 
                 if (note.labels.isNotEmpty()) {
 
@@ -71,7 +78,7 @@ class NotesAdapter constructor(private val listener: OnNoteClicked) :
             oldItem.current == newItem.current
 
         override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean =
-            oldItem.current == newItem.current
+            oldItem == newItem
 
     }
 

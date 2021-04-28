@@ -51,19 +51,19 @@ interface NotesDao {
         }
     }
 
-    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark DESC,current ")
+    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark DESC,current DESC")
     fun getSearchResultNotesByDateDesc(query: String): Flow<List<Note>>
 
-    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark ASC,current")
+    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark DESC,current ASC")
     fun getSearchResultNotesByDateASC(query: String): Flow<List<Note>>
 
-    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark DESC, heading")
+    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark DESC, heading DESC")
     fun getSearchResultNotesByNameDesc(query: String): Flow<List<Note>>
 
-    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark ASC, heading")
+    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark DESC, heading ASC")
     fun getSearchResultNotesByNameASC(query: String): Flow<List<Note>>
 
-//
+
 //    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY heading ASC, bookmark")
 //    fun getSearchResultNotesASC(query: String): Flow<List<Note>>
 //
@@ -71,7 +71,7 @@ interface NotesDao {
 //    fun getSearchResultNotesDesc(query: String): Flow<List<Note>>
 
 
-    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%'")
+    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description LIKE '%' || :query || '%'")
     fun getFilteredList(query: String): Flow<List<Note>>
 
 

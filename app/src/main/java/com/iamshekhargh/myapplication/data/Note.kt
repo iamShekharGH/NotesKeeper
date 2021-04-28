@@ -18,6 +18,7 @@ import java.util.*
 data class Note(
     val heading: String = "Heading",
     val description: String = "description",
+    val firebaseUserId: String = "",
     val labels: List<String> = arrayListOf(),
     val bookmark: Boolean = false,
     val reminder: Long = 0,
@@ -26,7 +27,7 @@ data class Note(
 ) : Parcelable {
     val formattedDate: String get() = DateFormat.getDateTimeInstance().format(current)
     val simpleDate: String
-        get() = SimpleDateFormat("E, dd MMM", Locale.ENGLISH).format(
+        get() = SimpleDateFormat("hh:mm aa  E, dd MMM", Locale.ENGLISH).format(
             current
         )
 }

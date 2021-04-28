@@ -8,15 +8,25 @@
     tools:context=".ui.mainFragment.FragmentMain">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/frag_main_progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/frag_main_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="8dp"
+            android:paddingBottom="4dp"
             android:scrollbars="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_note" />
@@ -43,13 +53,36 @@
             android:visibility="visible"
             tools:ignore="HardcodedText" />
 
-        <ImageView
-            android:id="@+id/frag_main_online_status"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_gravity="top|end"
+        <!--        <androidx.constraintlayout.widget.ConstraintLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content">-->
+
+        <TextView
+            android:id="@+id/frag_main_online_status_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:src="@drawable/circle" />
+            android:background="@drawable/background_online_status"
+            android:gravity="top|end"
+            android:padding="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:text="Sorry, connection could not be made to firebase"
+            tools:visibility="visible" />
+
+        <!--            <ImageView-->
+        <!--                android:id="@+id/frag_main_online_status"-->
+        <!--                android:layout_width="16dp"-->
+        <!--                android:layout_height="16dp"-->
+        <!--                android:layout_gravity="top|end"-->
+        <!--                android:layout_margin="16dp"-->
+        <!--                android:src="@drawable/circle"-->
+        <!--                app:layout_constraintEnd_toEndOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent" />-->
+        <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
 
         <TextView
             android:id="@+id/frag_main_empty_list"

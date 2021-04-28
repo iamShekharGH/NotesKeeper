@@ -1,5 +1,6 @@
 package com.iamshekhargh.myapplication.ui.mainFragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -19,6 +20,7 @@ import com.google.firebase.ktx.Firebase
 import com.iamshekhargh.myapplication.R
 import com.iamshekhargh.myapplication.data.Note
 import com.iamshekhargh.myapplication.databinding.FragmentMainBinding
+import com.iamshekhargh.myapplication.ui.MainActivity
 import com.iamshekhargh.myapplication.utils.onTextEntered
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -37,6 +39,7 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
     lateinit var binding: FragmentMainBinding
     private val viewModel: FragmentMainViewModel by viewModels()
     lateinit var notesAdapter: NotesAdapter
+    lateinit var onlineMenuItem: MenuItem
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -46,15 +49,11 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
 
         binding.apply {
             fragMainRv.adapter = notesAdapter
-//            val flexboxLayoutManager = FlexboxLayoutManager(requireContext())
-//            flexboxLayoutManager.flexDirection = FlexDirection.ROW
-//            flexboxLayoutManager.flexWrap = FlexWrap.WRAP
-//            flexboxLayoutManager.justifyContent = JustifyContent.CENTER
-//            fragMainRv.layoutManager = flexboxLayoutManager
-
             fragMainFab.setOnClickListener { viewModel.fabClicked() }
             fragMainFabTestingViews.setOnClickListener { viewModel.testFabClicked() }
         }
+
+        viewModel.fetchFromFirebase()
 
         swipeDownFunctions()
         itemSlideFunctionalityOnRecyclerView()
@@ -62,12 +61,15 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
         setupEventHandling()
         setHasOptionsMenu(true)
 
+        viewModel.listenToRepoEvents()
+
         setTitle()
     }
 
     private fun swipeDownFunctions() = binding.fragMainSwiperl.setOnRefreshListener {
         viewModel.swipePulled()
         binding.fragMainSwiperl.isRefreshing = false
+        showProgressBar(false)
     }
 
     private fun itemSlideFunctionalityOnRecyclerView() {
@@ -93,10 +95,11 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
         viewModel.getNotesList().observe(viewLifecycleOwner) { notes ->
             if (notes.isEmpty()) {
                 binding.fragMainEmptyList.visibility = View.VISIBLE
-                notesAdapter.submitList(arrayListOf())
+//                notesAdapter.submitList(arrayListOf())
             } else {
                 binding.fragMainEmptyList.visibility = View.GONE
                 notesAdapter.submitList(notes)
+                viewModel.uploadToFirebase(notes)
             }
         }
     }
@@ -135,7 +138,6 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
                                 "Edit Note"
                             )
                         findNavController().navigate(action)
-
                     }
                     EventHandler.OpenProfileFragment -> {
                         val action = FragmentMainDirections.actionGlobalFragmentProfile()
@@ -146,6 +148,12 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
                     }
                     is EventHandler.ShowSnackbar -> {
                         Snackbar.make(requireView(), event.text, Snackbar.LENGTH_SHORT).show()
+                    }
+                    is EventHandler.ProgressBarShow -> {
+                        showProgressBar(event.show)
+                    }
+                    is EventHandler.ShowFirebaseMessage -> {
+                        showNetworkMessage(event.text)
                     }
                 }
             }
@@ -159,9 +167,38 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
             }.show()
     }
 
+    private fun showProgressBar(kya: Boolean) {
+        if (kya) {
+            binding.apply {
+                fragMainProgressBar.visibility = View.VISIBLE
+                fragMainProgressBar.isIndeterminate = true
+            }
+        } else {
+            binding.apply {
+                fragMainProgressBar.visibility = View.GONE
+                fragMainProgressBar.isIndeterminate = false
+            }
+        }
+    }
+
+    private fun showNetworkMessage(t: String) {
+        binding.apply {
+            fragMainOnlineStatusText.visibility = View.VISIBLE
+
+            fragMainOnlineStatusText.text = t
+            fragMainOnlineStatusText.animate().apply {
+                translationXBy(-1000f)
+                scaleXBy(-0.1f)
+                scaleYBy(-0.1f)
+                duration = 3500
+            }.withEndAction { fragMainOnlineStatusText.visibility = View.GONE }.start()
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_activ_menu, menu)
         val searchItem = menu.findItem(R.id.menu_search)
+        onlineMenuItem = menu.findItem(R.id.menu_online)
         searchView = searchItem.actionView as SearchView
 
         searchView.onTextEntered { query ->
@@ -174,7 +211,10 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
         when (item.itemId) {
             R.id.menu_logout -> {
                 viewModel.logoutMenuItemClicked()
-                findNavController().popBackStack()
+//                findNavController().popBackStack()
+                val intent = Intent(requireActivity(), MainActivity::class.java)
+                startActivity(intent)
+                requireActivity().finish()
             }
             R.id.menu_profile -> {
                 viewModel.profileMenuItemClicked()
@@ -195,8 +235,6 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
             R.id.menu_delete_all_notes -> {
                 viewModel.deleteAllNotesClicked()
             }
-
-
         }
         return super.onOptionsItemSelected(item)
     }
@@ -208,13 +246,14 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
     override fun onAuthStateChanged(auth: FirebaseAuth) {
         if (auth.currentUser == null) {
             binding.apply {
-                fragMainOnlineStatus.visibility = View.GONE
+                if (onlineMenuItem != null) {
+                    onlineMenuItem.isVisible = false
+                }
             }
         } else {
             binding.apply {
-                fragMainOnlineStatus.visibility = View.VISIBLE
+                onlineMenuItem.isVisible = true
             }
         }
-
     }
 }

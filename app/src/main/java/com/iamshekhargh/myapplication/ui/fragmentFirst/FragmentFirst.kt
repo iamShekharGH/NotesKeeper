@@ -12,6 +12,7 @@ import com.google.firebase.ktx.Firebase
 import com.iamshekhargh.myapplication.R
 import com.iamshekhargh.myapplication.databinding.FragmentFirstBinding
 import com.iamshekhargh.myapplication.utils.FirstFragArgs
+import com.iamshekhargh.myapplication.utils.logi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -27,6 +28,7 @@ class FragmentFirst : Fragment(R.layout.fragment_first) {
     private lateinit var binding: FragmentFirstBinding
     lateinit var timer: CountDownTimer
     var timerStatus = false
+    private val TAG = "FragmentFirst"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,8 +42,8 @@ class FragmentFirst : Fragment(R.layout.fragment_first) {
             firstfragSignup.setOnClickListener { viewModel.signUpClicked() }
             firstfragSkip.setOnClickListener { viewModel.skipClicked() }
         }
-
         setupEvents()
+        requireActivity().actionBar?.setIcon(R.mipmap.ic_launcher_round)
     }
 
     private fun showLoginTimer() {
@@ -75,6 +77,7 @@ class FragmentFirst : Fragment(R.layout.fragment_first) {
         }
         if (viewModel.user != null) {
             showLoginTimer()
+            logi(TAG, viewModel.user!!.uid.toString())
         } else {
             binding.apply {
                 firstfragTimer.visibility = View.GONE
@@ -113,5 +116,4 @@ class FragmentFirst : Fragment(R.layout.fragment_first) {
             }
         }
     }
-
 }

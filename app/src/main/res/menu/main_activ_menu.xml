@@ -10,22 +10,10 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
     <item
-        android:icon="@drawable/ic_filter"
-        android:title="Sort"
-        app:showAsAction="always">
-        <menu>
-            <item
-                android:id="@+id/menu_sort_by_name"
-                android:title="SORT BY NAME" />
-            <item
-                android:id="@+id/menu_sort_by_date_created"
-                android:title="Sort by Date" />
-            <item
-                android:id="@+id/menu_ascending"
-                android:checkable="true"
-                android:title="Ascending" />
-        </menu>
-    </item>
+        android:id="@+id/menu_online"
+        android:icon="@drawable/circle"
+        android:title="Online"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_profile"
@@ -41,10 +29,27 @@
         android:title="Delete Profile"
         app:showAsAction="never" />
 
-<item
+    <item
         android:id="@+id/menu_delete_all_notes"
         android:title="Delete All Notes"
         app:showAsAction="never" />
 
+    <item
+        android:icon="@drawable/ic_filter"
+        android:title="Sort"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/menu_sort_by_name"
+                android:title="by name" />
+            <item
+                android:id="@+id/menu_sort_by_date_created"
+                android:title="by date" />
+            <item
+                android:id="@+id/menu_ascending"
+                android:checkable="true"
+                android:title="Asc on" />
+        </menu>
+    </item>
 
 </menu>

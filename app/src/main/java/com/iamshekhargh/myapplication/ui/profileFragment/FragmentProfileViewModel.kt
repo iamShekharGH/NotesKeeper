@@ -127,11 +127,11 @@ class FragmentProfileViewModel @Inject constructor() : ViewModel() {
         channelEvents.send(ProfileEvents.OpenLoginFrag)
     }
 
-    fun hideProgressBar() = viewModelScope.launch {
+    private fun hideProgressBar() = viewModelScope.launch {
         channelEvents.send(ProfileEvents.HideProgressBar)
     }
 
-    fun showProgressBar() = viewModelScope.launch {
+    private fun showProgressBar() = viewModelScope.launch {
         channelEvents.send(ProfileEvents.ShowProgressBar)
     }
 }
@@ -145,5 +145,4 @@ sealed class ProfileEvents {
     object OpenLoginFrag : ProfileEvents()
     object HideProgressBar : ProfileEvents()
     object ShowProgressBar : ProfileEvents()
-
 }

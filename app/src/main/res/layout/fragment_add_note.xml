@@ -51,21 +51,24 @@
                 android:id="@+id/add_frag_addReminder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/background_label"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal"
-                android:visibility="gone"
                 android:weightSum="10"
                 app:layout_constraintTop_toBottomOf="@id/add_frag_description">
 
                 <TextView
+                    android:id="@+id/add_frag_addReminder_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Add Reminder"
+                    android:gravity="center"
                     android:layout_gravity="center"
                     android:layout_weight="9"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    tools:text="Add Reminder" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
                 <ImageView
+                    android:id="@+id/add_frag_addReminder_add"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_weight="1"

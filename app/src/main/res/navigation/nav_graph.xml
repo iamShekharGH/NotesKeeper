@@ -70,7 +70,7 @@
     <fragment
         android:id="@+id/fragmentFirst"
         android:name="com.iamshekhargh.myapplication.ui.fragmentFirst.FragmentFirst"
-        android:label="FragmentFirst"
+        android:label="Choose"
         tools:layout="@layout/fragment_first">
         <action
             android:id="@+id/action_fragmentFirst_to_fragmentSignUp"

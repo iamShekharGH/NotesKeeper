@@ -56,5 +56,4 @@ object AppModule {
     @Singleton
     fun provideCoroutineScope() = CoroutineScope(SupervisorJob())
 
-
 }

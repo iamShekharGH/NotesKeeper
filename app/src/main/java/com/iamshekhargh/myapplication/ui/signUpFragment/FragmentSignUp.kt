@@ -49,7 +49,6 @@ class FragmentSignUp @Inject constructor() : Fragment(R.layout.fragment_signup) 
         } else {
             Snackbar.make(requireView(), "Login Cancelled by User", Snackbar.LENGTH_LONG).show()
         }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -77,14 +76,42 @@ class FragmentSignUp @Inject constructor() : Fragment(R.layout.fragment_signup) 
                 startGoogleSignIn()
             }
         }
-
         setupEvents()
-
     }
 
+    private fun progressBarVisible(isVisible: Boolean) {
+        binding.apply {
+            signUpProgressBar.isIndeterminate = isVisible
+            if (isVisible) {
+
+                imageView.animate().apply {
+//                    rotationX(360f)
+                    rotationBy(360f)
+                    duration = 3000
+                }.withEndAction {
+                    imageView.animate().apply {
+                        rotationYBy(3600f)
+//                        rotationXBy(360f)
+                        duration = 6000
+                    }
+                }.start()
+
+//                imageView.animate()
+//                    .rotationBy(360F)
+//                    .withEndAction {
+//                        imageView.animate().rotationYBy(360F).duration = 6000
+//                    }
+//                    .duration = 3000
+
+                signUpProgressBar.visibility = View.VISIBLE
+            } else {
+                signUpProgressBar.visibility = View.GONE
+            }
+        }
+    }
 
     private fun startGoogleSignIn() {
-        viewModel.startGoogleSignIn()
+        progressBarVisible(true)
         val signInIntent = viewModel.googleSignInClient.signInIntent
         resultContracts.launch(signInIntent)
     }
@@ -109,17 +136,24 @@ class FragmentSignUp @Inject constructor() : Fragment(R.layout.fragment_signup) 
             viewModel.eventsAsFlow.collect { event ->
                 when (event) {
                     is SignUpEvents.ShowSnackBar -> {
+                        progressBarVisible(false)
                         Snackbar.make(requireView(), event.text, Snackbar.LENGTH_SHORT).show()
                     }
                     is SignUpEvents.ShowEmailEditTextError -> {
+                        progressBarVisible(false)
                         showErrorOnEmailEditText(event.text)
                     }
                     is SignUpEvents.ShowPasswordEditTextError -> {
+                        progressBarVisible(false)
                         showErrorOnPasswordEditText(event.text)
                     }
                     SignUpEvents.LoginSuccessful -> {
+                        progressBarVisible(false)
                         val action = FragmentSignUpDirections.actionFragmentSignUpToFragmentMain()
                         findNavController().navigate(action)
+                    }
+                    is SignUpEvents.ShowProgressBar -> {
+                        progressBarVisible(event.orNot)
                     }
                 }
             }

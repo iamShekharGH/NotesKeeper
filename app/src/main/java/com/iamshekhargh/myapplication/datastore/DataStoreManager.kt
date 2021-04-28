@@ -3,10 +3,14 @@ package com.iamshekhargh.myapplication.datastore
 import android.app.Application
 import android.content.Context
 import android.util.Log
+
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
+import com.google.firebase.auth.FirebaseUser
 import com.google.gson.Gson
+import com.iamshekhargh.myapplication.utils.logi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
@@ -24,19 +28,21 @@ data class InformationPrefs(
     val labelList: String,
     val sortOrder: SortOrder,
     val searchQuery: String,
-    val ascending: Boolean
+    val ascending: Boolean,
+    val firebaseUserId: String,
 )
 
 enum class SortOrder { SORT_BY_NAME, SORT_BY_DATE_CREATED }
 
 @Singleton
-class DataStoreManager @Inject constructor(c: Application) {
+class DataStoreManager @Inject constructor(c: Application, user: FirebaseUser?) {
     private val TAG = "DataStoreManager"
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "com.iamshekhargh.myapplication")
     private val mDataStore = c.dataStore
 
     private object PreferenceKeys {
+        val FIREBASE_UID = stringPreferencesKey("firebaseUid")
         val LABEL_KEY = stringPreferencesKey("label")
         val LABEL_LIST_KEY = stringPreferencesKey("labelList")
         val SORT_ORDER = stringPreferencesKey("sortOrder")
@@ -58,8 +64,14 @@ class DataStoreManager @Inject constructor(c: Application) {
                 SortOrder.valueOf(prefs[PreferenceKeys.SORT_ORDER] ?: SortOrder.SORT_BY_NAME.name)
             val query = prefs[PreferenceKeys.SEARCH_QUERY] ?: ""
             val ascendingOrder = prefs[PreferenceKeys.ASCENDING_ORDER] ?: true
+            var fbUserId = ""
+            if (user != null) {
+                fbUserId = user.uid
+                logi(TAG, fbUserId)
+            }
 
-            InformationPrefs(label, labelList, sortOrder, query, ascendingOrder)
+
+            InformationPrefs(label, labelList, sortOrder, query, ascendingOrder, fbUserId)
         }
 
     suspend fun saveLabelList(ll: MutableList<String>) {
@@ -97,12 +109,16 @@ class DataStoreManager @Inject constructor(c: Application) {
         }
     }
 
-    fun getSearchQuery(): String {
-        var q = ""
-        mDataStore.data.map { pref ->
-            q = pref[PreferenceKeys.SEARCH_QUERY] ?: ""
+    fun getSearchQuery(): Flow<String> {
+        return mDataStore.data.map { pref ->
+            pref[PreferenceKeys.SEARCH_QUERY] ?: ""
         }
-        return q
+    }
+
+    fun getUserId(): Flow<String> {
+        return mDataStore.data.map { pref ->
+            pref[PreferenceKeys.FIREBASE_UID] ?: ""
+        }
     }
 
     suspend fun setAscendingOrderBool(order: Boolean) {

@@ -38,7 +38,6 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
 
     lateinit var googleSignInClient: GoogleSignInClient
 
-
     fun initialiseFirebaseAuth() {
         this.auth = Firebase.auth
     }
@@ -107,24 +106,6 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-//    fun setResultContract(requireActivity: FragmentActivity) {
-//        resultContract =
-//            requireActivity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//                if (result.resultCode == Activity.RESULT_OK) {
-//                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-//                    try {
-//                        val account = task.getResult(ApiException::class.java)
-//                        firebaseAuthWithGoogle(account?.idToken)
-//
-//                    } catch (e: ApiException) {
-//                        Log.w(TAG, "--------- Google Sign In Failed : ", e)
-//                        e.printStackTrace()
-//                        showSnackbar("Sign In Failed.")
-//                    }
-//                }
-//            }
-//    }
-
     private fun showSnackbar(e: String) = viewModelScope.launch {
         eventsChannel.send(SignUpEvents.ShowSnackBar(e))
     }
@@ -139,10 +120,12 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
 
     private fun loginSuccessful() = viewModelScope.launch {
         eventsChannel.send(SignUpEvents.LoginSuccessful)
+
     }
 
     fun loginClicked(email: String, password: String, fragType: FirstFragArgs) =
         viewModelScope.launch {
+            eventsChannel.send(SignUpEvents.ShowProgressBar(orNot = true))
             if (email.isNotEmpty() && password.isNotEmpty()) {
 
                 if (fragType == FirstFragArgs.SIGN_UP)
@@ -174,10 +157,9 @@ class FragmentSignUpViewModel @Inject constructor() : ViewModel() {
             }
     }
 
-    fun startGoogleSignIn() {
-        val signInIntent = googleSignInClient.signInIntent
+    fun progressBar(orNot: Boolean) = viewModelScope.launch {
+        eventsChannel.send(SignUpEvents.ShowProgressBar(orNot))
     }
-
 
     companion object {
         private const val TAG = "FragmentSignUpViewModel"
@@ -189,4 +171,5 @@ sealed class SignUpEvents {
     data class ShowEmailEditTextError(val text: String) : SignUpEvents()
     data class ShowPasswordEditTextError(val text: String) : SignUpEvents()
     object LoginSuccessful : SignUpEvents()
+    data class ShowProgressBar(val orNot: Boolean) : SignUpEvents()
 }

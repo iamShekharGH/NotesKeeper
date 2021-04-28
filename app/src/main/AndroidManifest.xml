@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.iamshekhargh.myapplication">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,7 +15,10 @@
         android:theme="@style/MyThemeColor">
         <activity
             android:name=".ui.MainActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:supportsPictureInPicture="true"
+            android:windowSoftInputMode="adjustResize"
+            tools:targetApi="n">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -19,56 +19,6 @@
             android:layout_marginEnd="16dp"
             android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/heading"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Heading" />
-
-            <EditText
-                android:id="@+id/description"
-                android:layout_width="match_parent"
-
-                android:layout_height="wrap_content"
-                android:hint="description" />
-
-            <EditText
-                android:id="@+id/label1"
-                android:layout_width="match_parent"
-
-                android:layout_height="wrap_content"
-                android:hint="label1" />
-
-            <EditText
-                android:id="@+id/label2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="label2" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/bookmark"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Bookmark" />
-
-            <EditText
-                android:id="@+id/current_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="current time" />
-
-            <EditText
-                android:id="@+id/reminder_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="reminder time" />
-
-            <Button
-                android:id="@+id/submit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Submit" />
-
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -9,31 +9,40 @@
     android:layout_marginEnd="8dp"
     app:cardCornerRadius="8dp">
 
-    <ImageView
-        android:id="@+id/note_bookmark"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_gravity="end|top"
-        android:layout_margin="4dp"
-        android:src="@drawable/ic_bookmark" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end">
 
+        <ImageView
+            android:id="@+id/note_bookmark"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="end|top"
+            android:layout_margin="4dp"
+            android:src="@drawable/ic_bookmark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/note_on_firebase"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="8dp"
+            android:src="@drawable/online_note_item"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/note_bookmark"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="8dp">
-
-        <TextView
-            android:id="@+id/note_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:fontFamily="@font/hind_medium"
-            android:hint="Heading"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:visibility="gone"
-            tools:text="Heading Number 1" />
 
         <TextView
             android:id="@+id/note_heading"
@@ -44,6 +53,17 @@
             android:hint="Heading"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             tools:text="Heading Number 1" />
+
+        <TextView
+            android:id="@+id/note_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:fontFamily="@font/hind_medium"
+            android:hint="Heading"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:visibility="visible"
+            tools:text="Note ID" />
 
         <TextView
             android:id="@+id/note_description"
