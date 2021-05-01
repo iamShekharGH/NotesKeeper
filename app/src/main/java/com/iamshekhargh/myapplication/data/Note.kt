@@ -30,4 +30,6 @@ data class Note(
         get() = SimpleDateFormat("hh:mm aa  E, dd MMM", Locale.ENGLISH).format(
             current
         )
+    val reminderSimpleText: String
+        get() = SimpleDateFormat("hh:mm aa  E, dd MMM", Locale.ENGLISH).format(reminder)
 }

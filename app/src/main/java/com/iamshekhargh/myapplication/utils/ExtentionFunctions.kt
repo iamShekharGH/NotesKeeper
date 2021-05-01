@@ -17,15 +17,22 @@ inline fun SearchView.onTextEntered(crossinline listener: (String) -> Unit) {
             listener(newText.orEmpty())
             return true
         }
-
     })
-
 }
 
 const val PRODUCTION = false
-
 fun logi(tag: String, text: String) {
-    if (!PRODUCTION){
+    if (!PRODUCTION) {
         Log.i(tag, text)
     }
+}
+
+sealed class ChannelEvents {
+    data class ShowProgressBar(val show: Boolean) : ChannelEvents()
+    data class ShowNetworkMessage(val message: String) : ChannelEvents()
+    data class DeleteTaskCompleted(val completed: Boolean) : ChannelEvents()
+}
+
+enum class NotificationKeys {
+    HEADING, DESCRIPTION, TIME, NOTE_OBJECT
 }

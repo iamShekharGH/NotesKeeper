@@ -51,16 +51,16 @@ interface NotesDao {
         }
     }
 
-    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark DESC,current DESC")
+    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark DESC,current COLLATE NOCASE DESC")
     fun getSearchResultNotesByDateDesc(query: String): Flow<List<Note>>
 
-    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark DESC,current ASC")
+    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark DESC,current COLLATE NOCASE ASC")
     fun getSearchResultNotesByDateASC(query: String): Flow<List<Note>>
 
-    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark DESC, heading DESC")
+    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark DESC, heading COLLATE NOCASE DESC")
     fun getSearchResultNotesByNameDesc(query: String): Flow<List<Note>>
 
-    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark DESC, heading ASC")
+    @Query("SELECT * FROM notes_table WHERE heading LIKE '%' || :query || '%' OR description  LIKE '%' || :query || '%'  ORDER BY bookmark DESC, heading COLLATE NOCASE ASC")
     fun getSearchResultNotesByNameASC(query: String): Flow<List<Note>>
 
 

@@ -5,11 +5,13 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.iamshekhargh.myapplication.data.Note
 import com.iamshekhargh.myapplication.datastore.DataStoreManager
+import com.iamshekhargh.myapplication.datastore.InformationPrefs
 import com.iamshekhargh.myapplication.datastore.SortOrder
-import com.iamshekhargh.myapplication.repository.ChannelEvents
 import com.iamshekhargh.myapplication.repository.NotesRepository
+import com.iamshekhargh.myapplication.utils.ChannelEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -105,6 +107,9 @@ class FragmentMainViewModel @Inject constructor(
                         event.message
                     )
                 )
+                is ChannelEvents.DeleteTaskCompleted -> {
+                    channel.send(EventHandler.ShowSnackbar("Note Deleted."))
+                }
             }
         }
     }
@@ -122,6 +127,10 @@ class FragmentMainViewModel @Inject constructor(
             repository.uploadToFirebase(notes)
     }
 
+    fun getDatastorePrefFlow(): Flow<InformationPrefs> {
+        return repository.getPrefFlow()
+
+    }
 }
 
 sealed class EventHandler {

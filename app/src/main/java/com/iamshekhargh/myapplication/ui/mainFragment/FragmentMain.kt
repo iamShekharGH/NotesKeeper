@@ -24,6 +24,8 @@ import com.iamshekhargh.myapplication.ui.MainActivity
 import com.iamshekhargh.myapplication.utils.onTextEntered
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 /**
  * Created by <<-- iamShekharGH -->>
@@ -204,6 +206,11 @@ class FragmentMain : Fragment(R.layout.fragment_main), NotesAdapter.OnNoteClicke
         searchView.onTextEntered { query ->
             viewModel.setSearchQuery(query)
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            menu.findItem(R.id.menu_ascending).isChecked =
+                viewModel.getDatastorePrefFlow().first().ascending
+        }
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 

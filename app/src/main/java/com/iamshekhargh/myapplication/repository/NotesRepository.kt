@@ -8,13 +8,12 @@ import com.google.firebase.firestore.ktx.toObject
 import com.iamshekhargh.myapplication.data.Note
 import com.iamshekhargh.myapplication.data.NotesDao
 import com.iamshekhargh.myapplication.datastore.DataStoreManager
+import com.iamshekhargh.myapplication.datastore.InformationPrefs
+import com.iamshekhargh.myapplication.utils.ChannelEvents
 import com.iamshekhargh.myapplication.utils.logi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -219,7 +218,7 @@ class NotesRepository @Inject constructor(
                         task.exception?.printStackTrace()
                     }
                     showProgressBar(false)
-                    showNetworkMessage("Upload to firebase complete.")
+//                    showNetworkMessage("Upload to firebase complete.")
                 }
         }
     }
@@ -291,10 +290,7 @@ class NotesRepository @Inject constructor(
         return auth.currentUser?.uid ?: ""
     }
 
-
-}
-
-sealed class ChannelEvents {
-    data class ShowProgressBar(val show: Boolean) : ChannelEvents()
-    data class ShowNetworkMessage(val message: String) : ChannelEvents()
+    fun getPrefFlow(): Flow<InformationPrefs> {
+        return dataStorePrefsFlow
+    }
 }

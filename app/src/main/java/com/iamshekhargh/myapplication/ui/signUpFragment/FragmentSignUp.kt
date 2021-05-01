@@ -75,6 +75,10 @@ class FragmentSignUp @Inject constructor() : Fragment(R.layout.fragment_signup) 
             googleSignInButton.setOnClickListener {
                 startGoogleSignIn()
             }
+
+            imageView.setOnClickListener {
+                animateImageView()
+            }
         }
         setupEvents()
     }
@@ -83,30 +87,27 @@ class FragmentSignUp @Inject constructor() : Fragment(R.layout.fragment_signup) 
         binding.apply {
             signUpProgressBar.isIndeterminate = isVisible
             if (isVisible) {
-
-                imageView.animate().apply {
-//                    rotationX(360f)
-                    rotationBy(360f)
-                    duration = 3000
-                }.withEndAction {
-                    imageView.animate().apply {
-                        rotationYBy(3600f)
-//                        rotationXBy(360f)
-                        duration = 6000
-                    }
-                }.start()
-
-//                imageView.animate()
-//                    .rotationBy(360F)
-//                    .withEndAction {
-//                        imageView.animate().rotationYBy(360F).duration = 6000
-//                    }
-//                    .duration = 3000
-
+                animateImageView()
                 signUpProgressBar.visibility = View.VISIBLE
             } else {
                 signUpProgressBar.visibility = View.GONE
             }
+        }
+    }
+
+    private fun animateImageView() {
+        binding.apply {
+            imageView.animate().apply {
+//                    rotationX(360f)
+                rotationBy(360f)
+                duration = 3000
+            }.withEndAction {
+                imageView.animate().apply {
+                    rotationYBy(3600f)
+//                        rotationXBy(360f)
+                    duration = 6000
+                }
+            }.start()
         }
     }
 

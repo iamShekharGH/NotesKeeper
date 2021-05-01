@@ -11,7 +11,6 @@
     tools:context=".ui.addNoteFragment.FragmentAddNote"
     tools:ignore="HardcodedText">
 
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -47,34 +46,6 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:layout_constraintTop_toBottomOf="@id/add_frag_heading" />
 
-            <LinearLayout
-                android:id="@+id/add_frag_addReminder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/background_label"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal"
-                android:weightSum="10"
-                app:layout_constraintTop_toBottomOf="@id/add_frag_description">
-
-                <TextView
-                    android:id="@+id/add_frag_addReminder_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Add Reminder"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:layout_weight="9"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
-
-                <ImageView
-                    android:id="@+id/add_frag_addReminder_add"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_weight="1"
-                    android:contentDescription="Add Label"
-                    android:src="@mipmap/ic_plus_foreground" />
-            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/add_frag_lable"
@@ -85,50 +56,76 @@
                 android:layoutAnimation="@anim/layout_animation"
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/add_frag_addReminder" />
+                app:layout_constraintTop_toBottomOf="@id/add_frag_addReminder"
+                tools:listitem="@layout/item_chip" />
 
-            <FrameLayout
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_reminder_secondary"
+                android:orientation="horizontal"
+                android:weightSum="10">
 
-                <com.google.android.material.chip.Chip
-                    android:layout_width="match_parent"
+                <EditText
+                    android:id="@+id/add_frag_label_et_name"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:chipMinTouchTargetSize="0dp" />
+                    android:layout_gravity="center"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="9"
+                    android:background="@null"
+                    android:hint="Enter Label"
+                    android:inputType="text"
+                    android:gravity="center"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="0dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/add_frag_label_iv_add"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@drawable/background_reminder_primary"
+                    android:contentDescription="Add Label to note."
+                    android:src="@mipmap/ic_plus_foreground" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/add_frag_addReminder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/background_reminder_secondary"
+                android:orientation="horizontal"
+                android:weightSum="10"
+                app:layout_constraintTop_toBottomOf="@id/add_frag_description">
+
+                <ImageView
+                    android:id="@+id/add_frag_addReminder_add"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/background_reminder_primary"
+                    android:contentDescription="Add Label"
+                    android:src="@mipmap/ic_plus_foreground" />
+                <TextView
+                    android:id="@+id/add_frag_addReminder_text"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="10">
+                    android:layout_gravity="center"
+                    android:layout_weight="9"
+                    android:gravity="center"
+                    android:text="Add Reminder"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-                    <EditText
-                        android:id="@+id/add_frag_label_et_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="9"
-                        android:background="@null"
-                        android:hint="Enter Label"
-                        android:inputType="text"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="0dp"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/black"
-                        android:textSize="14sp" />
 
-                    <ImageView
-                        android:id="@+id/add_frag_label_iv_add"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_gravity="center"
-                        app:tint="#6b6a6c"
-                        android:layout_weight="1"
-                        android:contentDescription="Add Label to note."
-                        android:src="@mipmap/ic_plus_foreground" />
-                </LinearLayout>
-            </FrameLayout>
+            </LinearLayout>
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/add_frag_bookmark"
@@ -145,12 +142,19 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
-                android:text="SUBMIT"
+                android:drawableStart="@drawable/ic_add"
+                android:text="SAVE"
                 android:textSize="21sp"
                 app:cornerRadius="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+
+            <ProgressBar
+                android:id="@+id/add_frag_progressbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

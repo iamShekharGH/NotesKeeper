@@ -51,7 +51,12 @@ class NotesAdapter constructor(private val listener: OnNoteClicked) :
                 noteCreateOn.visibility = View.VISIBLE
                 noteCreateOn.text = note.simpleDate
 
-                noteId.text = note.firebaseUserId
+                if (note.reminderSimpleText.isEmpty()) {
+                    noteId.visibility = View.VISIBLE
+                    noteId.text = "Reminder::${note.reminderSimpleText}"
+                } else {
+                    noteId.visibility = View.GONE
+                }
 
                 if (note.firebaseUserId.isNotEmpty()) {
                     noteOnFirebase.visibility = View.VISIBLE

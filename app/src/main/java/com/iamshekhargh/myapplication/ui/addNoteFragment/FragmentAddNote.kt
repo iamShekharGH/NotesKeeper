@@ -1,18 +1,30 @@
 package com.iamshekhargh.myapplication.ui.addNoteFragment
 
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.PendingIntent
 import android.app.TimePickerDialog
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import com.iamshekhargh.myapplication.R
+import com.iamshekhargh.myapplication.broadcasts.MyAlarmBroadcastReceiver
+import com.iamshekhargh.myapplication.data.Note
 import com.iamshekhargh.myapplication.databinding.FragmentAddNoteBinding
 import com.iamshekhargh.myapplication.ui.LabelAdapter
 import com.iamshekhargh.myapplication.ui.LabelAdapterListEditingOptions
+import com.iamshekhargh.myapplication.utils.NotificationKeys
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import java.text.SimpleDateFormat
@@ -23,6 +35,9 @@ import java.util.*
  * on 08 April 2021
  * at 1:03 AM.
  */
+
+const val CHANNEL_ID = "com.iamshekhargh.ma.channel.id"
+
 @AndroidEntryPoint
 class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEditingOptions {
 
@@ -50,10 +65,11 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
                     viewModel.labelList.add(label)
                 }
                 addFragBookmark.isChecked = viewModel.editNote?.bookmark ?: false
+                addFragAddReminderText.text = viewModel.editNote?.reminderSimpleText
                 updateLabelsInRV()
             }
 
-            // by default so no alarms trigger if nothing is selected.
+            // by default so no alarms trigger if nothing is selected. Better ways to do this but abhi doing this.
             viewModel.cal.set(Calendar.YEAR, 1990)
             addFragLable.adapter = labelAdapter
 
@@ -62,9 +78,6 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
             }
 
             addFragLabelIvAdd.setOnClickListener {
-//                Here i have to store list in shared pref or DataStore on exit to DialogFrag and then ulta.
-//                viewModel.openLabelAdder(addFragLabelEtName.text.toString())
-                // FIXME: 13/4/21 add datastore
                 viewModel.addLabelClicked(addFragLabelEtName.text.toString())
                 labelAdapter.submitList(viewModel.getTheLabelList())
                 addFragLabelEtName.selectAll()
@@ -81,6 +94,23 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
         }
 
         setupEvents()
+        viewModel.listenToRepositoryEvents()
+        showProgressBar(kya = false)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.add_frag_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_delete_note -> {
+                viewModel.deleteNote()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun showDateTimePicker() {
@@ -119,37 +149,45 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
         datePickerDialog.show()
     }
 
-
     private fun fillFragmentWithDetails() {
-        if (arguments != null) {
-            val args = FragmentAddNoteArgs.fromBundle(requireArguments())
 
-            // for edit label
-            val l = args.label
-            if (l != null && l.isNotEmpty()) {
-                viewModel.newLabelEntered(l)
-                updateLabelsInRV()
-            }
+        val text = arguments?.getString(NotificationKeys.NOTE_OBJECT.name) ?: ""
 
-            // for edit note.
-            val note = args.editNote
-            if (note != null) {
-                viewModel.loadNoteItem(note)
-            }
+        if (text.isNotEmpty()) {
+            val note = Gson().fromJson(text, Note::class.java)
+            viewModel.loadNoteItem(note)
+            arguments?.putString(NotificationKeys.NOTE_OBJECT.name, "")
 
-            // to set toolbar title.
-            val title = args.title
-            if (title.isNotEmpty()) {
-                requireActivity().title = title
+        } else
+            if (arguments != null) {
+                val args = FragmentAddNoteArgs.fromBundle(requireArguments())
+
+                // for edit label
+                val l = args.label
+                if (l != null && l.isNotEmpty()) {
+                    viewModel.newLabelEntered(l)
+                    updateLabelsInRV()
+                }
+
+                // for edit note.
+                val note = args.editNote
+                if (note != null) {
+                    viewModel.loadNoteItem(note)
+                }
+
+                // to set toolbar title.
+                val title = args.title
+                if (title.isNotEmpty()) {
+                    requireActivity().title = title
+                }
             }
-        }
     }
 
     private fun setupEvents() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.channelFlow.collect { event ->
                 when (event) {
-                    is EventsAddNote.HeadingIsEmpty -> {
+                    is EventsAddNote.ShowSnackbar -> {
                         Snackbar.make(requireView(), event.message, Snackbar.LENGTH_LONG).show()
                     }
                     EventsAddNote.PopTheFragment -> {
@@ -162,7 +200,27 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
                         val action = FragmentAddNoteDirections.actionGlobalConfirmationDialog()
                         findNavController().navigate(action)
                     }
+                    is EventsAddNote.ShowProgressBar -> {
+                        showProgressBar(event.show)
+                    }
+                    is EventsAddNote.SetAlarmForNote -> {
+                        setAlarm(event.note, event.time)
+                    }
                 }
+            }
+        }
+    }
+
+    private fun showProgressBar(kya: Boolean) {
+        if (kya) {
+            binding.apply {
+                addFragProgressbar.visibility = View.VISIBLE
+                addFragProgressbar.isIndeterminate = true
+            }
+        } else {
+            binding.apply {
+                addFragProgressbar.visibility = View.GONE
+                addFragProgressbar.isIndeterminate = false
             }
         }
     }
@@ -183,5 +241,39 @@ class FragmentAddNote : Fragment(R.layout.fragment_add_note), LabelAdapterListEd
         labelAdapter.submitList(viewModel.getTheLabelList())
     }
 
+    private fun setAlarm(note: Note, alarmTimeInMillis: Long) {
 
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmIntent = Intent(context, MyAlarmBroadcastReceiver::class.java).let { intent1 ->
+            intent1.putExtra(NotificationKeys.HEADING.name, note.heading)
+            intent1.putExtra(
+                NotificationKeys.TIME.name,
+                "Reminder Time: " + note.reminderSimpleText
+            )
+            if (note.heading.isNotBlank()) {
+                intent1.putExtra(NotificationKeys.DESCRIPTION.name, note.description)
+            }
+
+            intent1.putExtra(NotificationKeys.NOTE_OBJECT.name, Gson().toJson(note))
+            PendingIntent.getBroadcast(context, 0, intent1, 0)
+        }
+
+        alarmManager.setExact(
+            AlarmManager.RTC_WAKEUP,
+            alarmTimeInMillis,
+            alarmIntent
+        )
+//        val test = Calendar.getInstance().timeInMillis + 5000
+//        alarmManager.setExact(
+//            AlarmManager.RTC_WAKEUP,
+//            test,
+//            alarmIntent
+//        )
+    }
 }
+
+//            Not really necessary rite now.
+//            val bundle = Bundle()
+//            bundle.putString("heading", note.heading)
+//            bundle.putString("description", note.description)
+//            intent1.putExtras(bundle)

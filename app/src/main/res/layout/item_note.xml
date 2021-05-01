@@ -60,7 +60,6 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:fontFamily="@font/hind_medium"
-            android:hint="Heading"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:visibility="visible"
             tools:text="Note ID" />
@@ -97,6 +96,4 @@
             tools:text="Created on : 7th April 2020" />
 
     </LinearLayout>
-
-
 </androidx.cardview.widget.CardView>

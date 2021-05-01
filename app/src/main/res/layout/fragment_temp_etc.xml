@@ -19,6 +19,56 @@
             android:layout_marginEnd="16dp"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/test_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="9" />
+
+                <ImageView
+                    android:id="@+id/test_date_button"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:src="@mipmap/ic_plus_foreground" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/test_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="9" />
+
+                <ImageView
+                    android:id="@+id/test_time_button"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:src="@mipmap/ic_plus_foreground" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/test_show_alarm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SHOW ALARM!" />
+
+            <Button
+                android:id="@+id/test_show_notification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SHOW NOTIFICATION!" />
+
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
