@@ -24,9 +24,9 @@ service cloud.firestore {
     
         match /testNote/{testNote}{
         
-        	allow read: if isLoggedIn()
+          allow read: if isLoggedIn()
           allow update,create: if authIsSame()
-          allow delete: if isLoggedIn()
+          allow delete: if isLoggedIn()          
         }
     }
     
