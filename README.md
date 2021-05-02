@@ -16,19 +16,42 @@ Dependencies used are :~
   - firebase -> datastore, crashlitics, auth
   - Datastore (preference)
   - Glide
-
-Here are a few(a lot) screenshots:~<p>
+## Firebase (Cloud Firestore) Rules
+```
+rules_version = '2';
+service cloud.firestore {
+    match /databases/{database}/documents {
+    
+        match /testNote/{testNote}{
+        
+        	allow read: if isLoggedIn()
+          allow update,create: if authIsSame()
+          allow delete: if isLoggedIn()
+        }
+    }
+    
+    function isLoggedIn(){
+    	return request.auth.uid != null
+    }
+    
+    function authIsSame(){
+     return request.auth.uid == request.resource.data.firebaseUserId
+    }
+    
+} 
+```
+## Here are a few(a lot) screenshots:~<p>
   
-## SignUp
+### SignUp
 <img src=/screenshots/notesKeeper1.jpg width=200 /><img src=/screenshots/notesKeeper3.jpg width=200 /><img src=/screenshots/notesKeeper4.jpg width=200 />
   
-## Add/Edit Note
+### Add/Edit Note
 <img src=/screenshots/notesKeeper5.jpg width=200 /><img src=/screenshots/notesKeeper8.jpg width=200 /><img src=/screenshots/notesKeeper10.jpg width=200 /><img src=/screenshots/notesKeeper13.jpg width=200 />
 
-## Set Reminder
+### Set Reminder
 <img src=/screenshots/notesKeeper7.jpg width=200 /><img src=/screenshots/notesKeeper9.jpg width=200 />
-## Menu Options like sort,Delete all Notes.
+### Menu Options like sort,Delete all Notes.
 <img src=/screenshots/notesKeeper11.jpg width=200 /><img src=/screenshots/notesKeeper12.jpg width=200 />
 
-## List and search
+### List and search
  <img src=/screenshots/notesKeeper2.jpg width=200 /><img src=/screenshots/notesKeeper14.jpg width=200 /><img src=/screenshots/notesKeeper15.jpg width=200 /><img src=/screenshots/notesKeeper16.jpg width=200 /><img src=/screenshots/notesKeeper6.jpg width=200 />
