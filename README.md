@@ -2,7 +2,7 @@
 
 Hi,<p>
 NotesKeeper is a very simple aap that lets you make notes. You can add labels, set reminders , save notes locally using room and also have a backup with firebase.
-It is a fun project which honestly is not about the ass as much as it is about learning how to code in MVVM patterns.
+It is a fun project which honestly is not about the app as much as it is about learning how to code in MVVM patterns.
 I have followed MVVM pattern to write this aap. This is following the <a href="https://developer.android.com/jetpack/guide" >Guide to app Architecture.</a><p>
 Dependencies used are :~
 
