@@ -47,7 +47,7 @@ service cloud.firestore {
 <img src=https://github.com/iamShekharGH/NotesKeeper/blob/main/screenshots/notesKeeper1.jpg width=200 /><img src=https://github.com/iamShekharGH/NotesKeeper/blob/main/screenshots/notesKeeper3.jpg width=200 /><img src=https://github.com/iamShekharGH/NotesKeeper/blob/main/screenshots/notesKeeper4.jpg width=200 />
   
 ### Add/Edit Note
-<img src=https://github.com/iamShekharGH/NotesKeeper/blob/main/screenshots/notesKeeper5.jpg width=200 /><img src=https://github.com/iamShekharGH/NotesKeeper/blob/main/screenshots/notesKeeper8.jpg width=200 /><img src=/screenshots/notesKeeper10.jpg width=200 /><img src=https://github.com/iamShekharGH/NotesKeeper/blob/main/screenshots/notesKeeper13.jpg width=200 />
+<img src=https://github.com/iamShekharGH/NotesKeeper/blob/main/screenshots/notesKeeper5.jpg width=200 /><img src=https://github.com/iamShekharGH/NotesKeeper/blob/main/screenshots/notesKeeper8.jpg width=200 /><img src=https://github.com/iamShekharGH/NotesKeeper/blob/main/screenshots/notesKeeper10.jpg width=200 /><img src=https://github.com/iamShekharGH/NotesKeeper/blob/main/screenshots/notesKeeper13.jpg width=200 />
 
 ### Set Reminder
 <img src=https://github.com/iamShekharGH/NotesKeeper/blob/main/screenshots/notesKeeper7.jpg width=200 /><img src=https://github.com/iamShekharGH/NotesKeeper/blob/main/screenshots/notesKeeper9.jpg width=200 />
